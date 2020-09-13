@@ -1,6 +1,6 @@
 ======= MORCUTOOL =======
 
-A tool for mass exporting files from MySims .package archives. 
+A tool for mass exporting files from the MySims series .package archives. 
 
 It currently supports both MySims Agents and MySims Skyheroes, as they were incompatible
 with the existing package editors designed for The Sims 3.
