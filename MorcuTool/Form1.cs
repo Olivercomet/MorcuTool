@@ -421,9 +421,6 @@ namespace MorcuTool
                             Console.WriteLine(sig);
                             return;
                         }
-
-                        MessageBox.Show("MySims Kingdom is not supported at this time.", "Error", MessageBoxButtons.OK);
-                        return;
                     }
 
 
@@ -539,7 +536,7 @@ namespace MorcuTool
                     }
                     else     //MSK etc, don't know if it works
                     {
-                        uint indexversion = reader.ReadUInt32();
+                        ulong indexversion = reader.ReadUInt64();
 
                         if (indexversion == 0)
                         {
@@ -567,13 +564,17 @@ namespace MorcuTool
                                 Subfile newSubfile = new Subfile();
 
                                 newSubfile.typeID = reader.ReadUInt32();
-                                newSubfile.groupID = reader.ReadUInt32();
-
-                                newSubfile.hash = reader.ReadUInt32();
+                                newSubfile.hash = reader.ReadUInt64();   //or might be hash
                                 newSubfile.fileoffset = reader.ReadUInt32();
-                                reader.BaseStream.Position += 0x04;
-                                newSubfile.filesize = reader.ReadUInt32();
+                                newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
+                                newSubfile.uncompressedsize = reader.ReadUInt32();
                                 reader.BaseStream.Position += 0x04; //flags
+
+                                if (newSubfile.filesize == newSubfile.uncompressedsize)
+                                {
+                                    newSubfile.uncompressedsize = 0;
+                                }
+
                                 newPackage.subfiles.Add(newSubfile);
                             }
                         }
@@ -599,7 +600,7 @@ namespace MorcuTool
                         Byte[] newfile = new byte[newPackage.subfiles[i].filesize];
 
 
-                        filesprocessed++;
+                        
                     
                         {
                             reader.BaseStream.Position = newPackage.subfiles[i].fileoffset;
@@ -613,28 +614,48 @@ namespace MorcuTool
 
                             switch (newPackage.subfiles[i].typeID)
                             {
-                                case 0x2954E734:          //RMDL        
+                                case 0x2954E734:          //RMDL MSA     
                                     fileextension = ".rmdl";        //TYPE ID 29 54 E7 34
                                     break;
 
-                                case 0xE6640542:          //MATD        
+                                case 0xF9E50586:          //RMDL MSK     
+                                    fileextension = ".rmdl";        //TYPE ID 29 54 E7 34
+                                    break;
+
+                                case 0xE6640542:          //MATD MSA    
                                     fileextension = ".matd";        //TYPE ID E6 64 05 42
                                     break;
 
-                                case 0x92AA4D6A:         //altered TPL
+                                case 0x01D0E75D:          //MATD MSK    
+                                    fileextension = ".matd";      
+                                    break;
+
+                                case 0x92AA4D6A:         //altered TPL MSA
                                     fileextension = ".tpl";         //TYPE ID 92 AA 4D 6A
                                     break;
 
-                                case 0x787E842A:         //MTST 
+                                case 0x00B2D882:         //altered TPL MSK
+                                    fileextension = ".tpl";
+                                    break;
+
+                                case 0x787E842A:         //MTST Material Set MSA
                                     fileextension = ".mtst";         //TYPE ID 78 7E 84 2A
+                                    break;
+
+                                case 0x02019972:      //MTST MSK
+                                    fileextension = ".mtst";
                                     break;
 
                                case 0x0EFC1A82:         //FPST   footprint set.      contains a model footprint (ftpt) which is documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
                                     fileextension = ".fpst";
                                     break;
 
-                                case 0x2199BB60:        //BNKb    BNK big endian                                vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
+                                case 0x2199BB60:        //BNKb    big endian BNK    MSA                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
                                     fileextension = ".bnk";        //TYPE ID 21 99 BB 60
+                                    break;
+
+                                case 0xB6B5C271:        //BNKb    BNK    MSK (idk which endian, not tested)                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
+                                    fileextension = ".bnk";       
                                     break;
 
                                 case 0x2699C28D:        //BIGF
@@ -655,9 +676,13 @@ namespace MorcuTool
                                     containslua = true;
                                    break;
 
-                                case 0x2EF1E401:     //SLOT
+                                case 0x2EF1E401:     //SLOT MSA
                                    fileextension = ".slot";
                                    break;
+
+                                case 0x487BF9E4:     //SLOT MSK
+                                    fileextension = ".slot";
+                                    break;
 
                                 case 0x28707864:       //particles file
                                     fileextension = ".particles";           //TYPE ID 28 70 78 64
@@ -683,12 +708,20 @@ namespace MorcuTool
                                     fileextension = ".llmf";
                                     break;
 
-                                case 0x4672E5BD:                //found in map files?  
+                                case 0x4672E5BD:    //RIG MSA  
                                     fileextension = ".grannyrig";             //TYPE ID 46 72 E5 BD
                                     break;
 
-                                case 0xD6BEDA43:            
+                                case 0x8EAF13DE:    //RIG MSK
+                                    fileextension = ".grannyrig";
+                                    break;
+
+                                case 0xD6BEDA43:    //ANIMATION MSA
                                    fileextension = ".animation";             //TYPE ID D6 BE DA 43
+                                    break;
+
+                                case 0x6B20C4F3:    //ANIMATION MSK
+                                    fileextension = ".animation";
                                     break;
 
                                  case 0xE55D5715:
@@ -698,10 +731,17 @@ namespace MorcuTool
                                 case 0x276CA4B9:         //TrueType font 
                                     fileextension = ".ttf";                      //TYPE ID 27 6C A4 B9
                                     break;
+
+                                case 0xD5988020:    //MSA PHYS
+                                    fileextension = ".phys";
+                                    break;
+
                                 default:
                                     Console.WriteLine("Unknown type ID " + newPackage.subfiles[i].typeID +", the file magic was:");
-                                    Console.WriteLine(ReverseEndian(BitConverter.ToUInt32(new Byte[] { newfile[0], newfile[1], newfile[2], newfile[3] },0)));
+                                    Console.WriteLine((char)newfile[0] + "" + (char)newfile[1] + "" + (char)newfile[2] + "" + (char)newfile[3]);
                                     Console.WriteLine("and this type ID appears " + newPackage.GetNumOccurrencesOfTypeID(newPackage.subfiles[i].typeID) + " times in total.");
+                                    Console.WriteLine("index of file was " + filesprocessed);
+                                    fileextension = newPackage.subfiles[i].typeID.ToString();
                                     break;
                             }
 
@@ -746,7 +786,7 @@ namespace MorcuTool
                             }
 
 
-                            
+
 
 
                             /*
@@ -778,7 +818,7 @@ namespace MorcuTool
                                 }*/
 
 
-
+                            filesprocessed++;
                             File.WriteAllBytes(newfilename + fileextension, newfile);
 
                         }
@@ -1830,7 +1870,7 @@ namespace MorcuTool
 
             openFileDialog1.Title = "Select TPL";
             openFileDialog1.DefaultExt = "tpl";
-            openFileDialog1.Filter = "Texture Palette Library (*.tpl)|*.tpl";
+            openFileDialog1.Filter = "Texture Palette Library (*.tpl)|*.tpl|All files (*.*)|*.*";
             openFileDialog1.CheckFileExists = true;
             openFileDialog1.CheckPathExists = true;
             openFileDialog1.Multiselect = true;
@@ -1887,7 +1927,7 @@ namespace MorcuTool
 
                     reader.BaseStream.Position = 0x2D6FF3;
 
-                    while (reader.BaseStream.Position < 0x32EBEB)   //I don't think this is quite the right address
+                    while (reader.BaseStream.Position < 0x32EBEB)   //I don't know if this is quite the right address
                         {
                         luaString newLuaString = new luaString();
                         newLuaString.hash = ReverseEndian(reader.ReadUInt32());
