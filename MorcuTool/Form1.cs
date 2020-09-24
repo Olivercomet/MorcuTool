@@ -536,7 +536,7 @@ namespace MorcuTool
                     }
                     else     //MSK etc, don't know if it works
                     {
-                        ulong indexversion = reader.ReadUInt64();
+                        uint indexversion = reader.ReadUInt32();
 
                         if (indexversion == 0)
                         {
@@ -557,13 +557,43 @@ namespace MorcuTool
                                 newPackage.subfiles.Add(newSubfile);
                             }
                         }
-                        else
+                        else if (indexversion == 1)
+                            {
+                            MessageBox.Show("Index version 1 not implemented!");
+                        
+                            }
+                        else if (indexversion == 2)
                         {
                             for (uint i = 0; i < newPackage.filecount; i++)
                             {
                                 Subfile newSubfile = new Subfile();
 
+                                reader.BaseStream.Position += 4;
                                 newSubfile.typeID = reader.ReadUInt32();
+                                newSubfile.hash = reader.ReadUInt64();   //or might be hash
+                                newSubfile.fileoffset = reader.ReadUInt32();
+                                newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
+                                newSubfile.uncompressedsize = reader.ReadUInt32();
+                                reader.BaseStream.Position += 0x04; //flags
+
+                                if (newSubfile.filesize == newSubfile.uncompressedsize)
+                                {
+                                    newSubfile.uncompressedsize = 0;
+                                }
+
+                                newPackage.subfiles.Add(newSubfile);
+                            }
+                        }
+                        else if (indexversion == 3)
+                        {
+                            uint allFilesTypeID = reader.ReadUInt32();
+                            reader.BaseStream.Position += 4;
+
+                            for (uint i = 0; i < newPackage.filecount; i++)
+                            {
+                                Subfile newSubfile = new Subfile();
+
+                                newSubfile.typeID = allFilesTypeID;
                                 newSubfile.hash = reader.ReadUInt64();   //or might be hash
                                 newSubfile.fileoffset = reader.ReadUInt32();
                                 newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
@@ -671,10 +701,15 @@ namespace MorcuTool
                                     fileextension = ".fx";
                                     break;
 
-                                case 0x3681D75B:        //LUA
+                                case 0x3681D75B:        //LUA MSA
                                    fileextension = ".lua";
                                     containslua = true;
                                    break;
+
+                                case 0x2B8E2411:         //LUA MSK
+                                    fileextension = ".lua";
+                                    containslua = true;
+                                    break;
 
                                 case 0x2EF1E401:     //SLOT MSA
                                    fileextension = ".slot";
@@ -704,7 +739,11 @@ namespace MorcuTool
                                     fileextension = ".buildableregion";
                                     break;
 
-                                case 0xA5DCD485:                     //LLMF
+                                case 0xA5DCD485:                     //LLMF MSA
+                                    fileextension = ".llmf";
+                                    break;
+
+                                case 0x58969018:                     //LLMF MSK
                                     fileextension = ".llmf";
                                     break;
 
