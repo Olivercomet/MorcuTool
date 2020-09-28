@@ -10,7 +10,7 @@ namespace MorcuTool
 {
     public class Subfile
     {
-        byte[] filebytes; //will only contain bytes if the file has been exported or modified by the user.
+        public byte[] filebytes = new byte[0]; //will only contain bytes if the file has been exported or modified by the user.
 
         public ulong hash;
         public uint fileoffset;
@@ -56,6 +56,11 @@ namespace MorcuTool
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     File.WriteAllBytes(saveFileDialog1.FileName, filebytes);
+                    if (global.activePackage.date.Year > 0)
+                        {
+                        File.SetLastWriteTime(saveFileDialog1.FileName, global.activePackage.date);
+                        }
+                   
                 }
             }
         }

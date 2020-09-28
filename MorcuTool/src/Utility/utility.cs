@@ -82,6 +82,57 @@ namespace MorcuTool
         }
 
 
+        public static void AddULongToList(List<byte> list, ulong input)
+        {
+            list.Add((byte)input);
+            list.Add((byte)(input >> 8));
+            list.Add((byte)(input >> 16));
+            list.Add((byte)(input >> 24));
+            list.Add((byte)(input >> 32));
+            list.Add((byte)(input >> 40));
+            list.Add((byte)(input >> 48));
+            list.Add((byte)(input >> 56));
+        }
+
+        public static void AddLongToList(List<byte> list, long input)
+        {
+            list.Add((byte)input);
+            list.Add((byte)(input >> 8));
+            list.Add((byte)(input >> 16));
+            list.Add((byte)(input >> 24));
+            list.Add((byte)(input >> 32));
+            list.Add((byte)(input >> 40));
+            list.Add((byte)(input >> 48));
+            list.Add((byte)(input >> 56));
+        }
+        public static void AddUIntToList(List<byte> list, uint integer) {
+            list.Add((byte)integer);
+            list.Add((byte)(integer >> 8));
+            list.Add((byte)(integer >> 16));
+            list.Add((byte)(integer >> 24));
+        }
+
+        public static void AddIntToList(List<byte> list, int integer)
+        {
+            list.Add((byte)integer);
+            list.Add((byte)(integer >> 8));
+            list.Add((byte)(integer >> 16));
+            list.Add((byte)(integer >> 24));
+        }
+
+        public static void AddUShortToList(List<byte> list, ushort input)
+        {
+            list.Add((byte)input);
+            list.Add((byte)(input >> 8));
+        }
+        public static void AddShortToList(List<byte> list, short input)
+        {
+            list.Add((byte)input);
+            list.Add((byte)(input >> 8));
+        }
+
+
+
         public static byte[] Decompress_QFS(byte[] filebytes)
         {
 

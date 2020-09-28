@@ -39,6 +39,8 @@ namespace MorcuTool
         public uint reserved1 = 0x00;
         public uint reserved2 = 0x00;
 
+        uint MSKindexversion = 0x00;
+
         public List<IndexEntry> IndexEntries = new List<IndexEntry>();
         public ulong indexnumberofentries = 0x00;
 
@@ -203,9 +205,9 @@ namespace MorcuTool
                 }
                 else     //MySims and MySims Kingdom use these
                 {
-                    uint indexversion = reader.ReadUInt32();
+                    MSKindexversion = reader.ReadUInt32();
 
-                    if (indexversion == 0)  
+                    if (MSKindexversion == 0)  
                     {
                         Console.WriteLine("index version 0");
                         for (uint i = 0; i < filecount; i++)
@@ -228,12 +230,12 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
-                    else if (indexversion == 1)
+                    else if (MSKindexversion == 1)
                     {
                         MessageBox.Show("Index version 1 not implemented!");
 
                     }
-                    else if (indexversion == 2)
+                    else if (MSKindexversion == 2)
                     {
                         Console.WriteLine("index version 2");
 
@@ -259,7 +261,7 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
-                    else if (indexversion == 3)
+                    else if (MSKindexversion == 3)
                     {
                         Console.WriteLine("index version 3");
                         uint allFilesTypeID = reader.ReadUInt32();
@@ -284,7 +286,7 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
-                    if (indexversion == 4)  
+                    if (MSKindexversion == 4)  
                     {
                         Console.WriteLine("index version 4");
                         reader.BaseStream.Position += 4;
@@ -309,7 +311,7 @@ namespace MorcuTool
                     }
                     else
                         {
-                        MessageBox.Show("Unknown index version: "+indexversion);
+                        MessageBox.Show("Unknown index version: "+ MSKindexversion);
                         return;
                         }
                 }
@@ -787,6 +789,141 @@ namespace MorcuTool
             }
             
             MessageBox.Show("Files extracted. They are in the same folder as the original archive.", "Extraction complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+
+        public uint ReverseEndianIfNeeded(uint input) { 
+        if (packageType == PackageType.Agents)
+            {
+            input = utility.ReverseEndian(input);
+            }
+            return input;
+        }
+
+
+        public void RebuildPackage()
+        {
+
+            List<byte> output = new List<byte>();
+
+            uint packageVersion = 0;
+
+            if (packageType == PackageType.Kingdom)
+                {
+                output.Add((byte)'D');
+                output.Add((byte)'B');
+                output.Add((byte)'P');
+                output.Add((byte)'F');
+                packageVersion = 2;
+                }
+            else if(packageType == PackageType.Agents)
+                {
+                output.Add((byte)'F');
+                output.Add((byte)'P');
+                output.Add((byte)'B');
+                output.Add((byte)'D');
+                packageVersion = 3;
+                }
+
+            //offset 0x04
+
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(packageVersion));
+
+            //offset 0x08
+
+            for (int i = 0; i < 0x10; i++)
+                {
+                output.Add(0x00);
+                }
+
+            //offset 0x18
+
+            if (packageType == PackageType.Kingdom)
+                {
+                for (int i = 0; i < 8; i++)
+                    {
+                    output.Add(0x00);   //pad
+                    }
+                }
+            else if (packageType == PackageType.Agents)
+                {
+                utility.AddLongToList(output, utility.ReverseEndianLong(DateTime.Now.ToBinary()));
+                }
+
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexmajorversion));
+
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(filecount));
+
+            //offset 0x28
+
+            if (packageType == PackageType.Kingdom)
+                {
+                for (int i = 0; i < 4; i++)
+                    {
+                    output.Add(0x00);   //pad
+                    }
+                }
+            else if (packageType == PackageType.Agents)
+                {
+                utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));       //this will be returned to later once we know what it is
+                }
+
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexsize));        //this will be returned to later once we know what it is
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(holeentrycount));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(holeoffset));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(holesize));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexminorversion));
+
+            if (packageType == PackageType.Agents)
+                {
+                utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown4));
+                }
+
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));   //this will be returned to later once we know what it is
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown5));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown6));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved1));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved2));
+
+            while (output.Count < 0x60)
+                {
+                output.Add(0x00);
+                }
+
+            //=====================================================================================
+            //ACTUALLY, ISN'T IT ORGANISED BY TYPE ID? (IN MSA, AT LEAST?) THAT MIGHT BE IMPORTANT
+            //and then, within a type id, it's alphabetical
+            //=====================================================================================
+
+            foreach (Subfile f in subfiles)
+                {
+                if (f.filebytes == null || f.filebytes.Length == 0) //then the file was not modified or read, so transfer it directly from the old package
+                    {
+                    for (int i = 0; i < f.filesize; i++)
+                        {
+                        output.Add(filebytes[f.fileoffset + i]);
+                        }
+                    }
+                else //if it was modified or read, use the bytes from its filebytes array
+                    {
+                    for (int i = 0; i < f.filebytes.Length; i++)
+                        {
+                        output.Add(f.filebytes[i]);
+                        }
+                    }
+                }
+
+            //that should bring us up to the start of the index table
+
+            //=====================================================================================
+            //ACTUALLY, ISN'T IT ORGANISED BY TYPE ID? (IN MSA, AT LEAST?) THAT MIGHT BE IMPORTANT.
+            //and then, within a type id, it's alphabetical
+            //=====================================================================================
+
+
+
+
+
         }
     }
 

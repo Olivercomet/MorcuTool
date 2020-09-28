@@ -1092,7 +1092,7 @@ namespace MorcuTool
                 treeNodesAndSubfiles.Add(newestNode, file);
             }
 
-            FileTree.Sort();
+            //FileTree.Sort();
             FileTree.CollapseAll();
             FileTree.EndUpdate();
         }
