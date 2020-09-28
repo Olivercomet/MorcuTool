@@ -46,7 +46,7 @@ namespace MorcuTool
                     flags = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                     pos+=4;
 
-                     if (version == 2)  //MYSIMS
+                    if (version == 1)   //MYSIMS
                         {
                         pos = 0x1C;
 
@@ -64,7 +64,27 @@ namespace MorcuTool
 
                         imageoffset = 0x4C;
                         pos += 4;
-                        File.WriteAllBytes("test.tpl",file);
+
+                        imagesize = (uint)(height * width * 4);
+                        }
+                     else if (version == 2)  //MYSIMS
+                        {
+                        pos = 0x1C;
+
+                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 2;
+                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 5;
+
+                        imageformat = file[pos];
+                        pos++;
+                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        pos += 4;
+
+                        pos += 0x14;
+
+                        imageoffset = 0x4C;
+                        pos += 4;
 
                         imagesize = (uint)(height * width * 4);
                         }
@@ -125,15 +145,6 @@ namespace MorcuTool
 
                 Array.Copy(file,pos,imageData,0,file.Length-pos);
 
-                //List<Byte[]> imagesubblocks = new List<Byte[]>();
-
-
-               // for (int i = 0; i < imagesize / 8; i++)
-               // {
-                //    imagesubblocks.Add(BitConverter.GetBytes(BitConverter.ToUInt64(file,pos)));
-                //    pos += 8;
-               // }
-
                 //create tpl file byte array
 
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x0020AF30)));
@@ -166,12 +177,7 @@ namespace MorcuTool
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
 
-
                 output.AddRange(imageData);
-                //for (int i = 0; i < imagesize / 8; i++)
-                //{
-                 //   output.AddRange(imagesubblocks[i]);
-                //}
 
             return output;
         }

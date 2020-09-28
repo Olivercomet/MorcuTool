@@ -24,7 +24,6 @@ namespace MorcuTool
         }
 
 
-
         public void LoadVault() {
             using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
             {

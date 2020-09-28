@@ -201,11 +201,11 @@ namespace MorcuTool
                         subfiles.Add(newSubfile);
                     }
                 }
-                else     //MySims, MySims Kingdom etc, don't know if all the index versions work
+                else     //MySims and MySims Kingdom use these
                 {
                     uint indexversion = reader.ReadUInt32();
 
-                    if (indexversion == 0)  //MYSIMS USES THIS, SO YOU NEED TO IMPLEMENT IT
+                    if (indexversion == 0)  
                     {
                         Console.WriteLine("index version 0");
                         for (uint i = 0; i < filecount; i++)
@@ -284,6 +284,34 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
+                    if (indexversion == 4)  
+                    {
+                        Console.WriteLine("index version 4");
+                        reader.BaseStream.Position += 4;
+                       
+                        for (uint i = 0; i < filecount; i++)
+                        {
+                            Subfile newSubfile = new Subfile();
+
+                            newSubfile.typeID = reader.ReadUInt32();
+                            newSubfile.hash = reader.ReadUInt64();
+                            newSubfile.fileoffset = reader.ReadUInt32();
+                            newSubfile.filesize = reader.ReadUInt32();
+                            newSubfile.uncompressedsize = reader.ReadUInt32();
+
+                            if (newSubfile.filesize == newSubfile.uncompressedsize)
+                            {
+                                newSubfile.uncompressedsize = 0;
+                            }
+
+                            subfiles.Add(newSubfile);
+                        }
+                    }
+                    else
+                        {
+                        MessageBox.Show("Unknown index version: "+indexversion);
+                        return;
+                        }
                 }
 
                 //extract files
@@ -362,12 +390,12 @@ namespace MorcuTool
                                 break;
 
                             case 0x3681D75B:        //LUA MSA
-                                fileextension = ".lua";
+                                fileextension = ".luac";
                                 containslua = true;
                                 break;
 
                             case 0x2B8E2411:         //LUA MSK
-                                fileextension = ".lua";
+                                fileextension = ".luac";
                                 containslua = true;
                                 break;
 
@@ -399,11 +427,11 @@ namespace MorcuTool
                                 fileextension = ".buildableregion";
                                 break;
 
-                            case 0xA5DCD485:                     //LLMF MSA
+                            case 0xA5DCD485:                     //LLMF level bin MSA
                                 fileextension = ".llmf";
                                 break;
 
-                            case 0x58969018:                     //LLMF MSK
+                            case 0x58969018:                     //LLMF level bin MSK
                                 fileextension = ".llmf";
                                 break;
 
@@ -433,6 +461,106 @@ namespace MorcuTool
 
                             case 0xD5988020:    //MSK PHYS
                                 fileextension = ".phys";
+                                break;
+
+                            case 0x01661233:   //model          used by MySims, not the same as rmdl
+                                fileextension = ".model";
+                                break;
+
+                            case 0x0166038c:
+                                fileextension = ".KeyNameMap";
+                                break;
+
+                            case 0x015A1849:
+                                fileextension = ".geometry";
+                                break;
+
+                            case 0x00b552ea:
+                                fileextension = ".oldSpeedTree";
+                                break;
+
+                            case 0x021d7e8c:
+                                fileextension = ".speedTree";
+                                break;
+
+                            case 0x8e342417:
+                                fileextension = ".compositeTexture";
+                                break;
+
+                            case 0x025ed6f4:
+                                fileextension = ".simOutfit";
+                                break;
+
+                            case 0x585ee310:
+                                fileextension = ".levelXml";
+                                break;
+
+                            case 0x474999b4:    //uncompiled lua script
+                                fileextension = ".lua";
+                                break;
+
+                            case 0x50182640:    //Light set XML MySims
+                                fileextension = ".lightSetXml";
+                                break;
+
+                            case 0x50002128:    //Light set bin MySims
+                                fileextension = ".lightSetBin";
+                                break;
+
+                            case 0xdc37e964:   //xml
+                                fileextension = ".xml";
+                                break;
+
+                            case 0x2c81b60a:    //footprint set MySims
+                                fileextension = ".footprintSet";
+                                break;
+
+                            case 0xc876c85e:    //object construction xml
+                                fileextension = ".objectConstructionXml";
+                                break;
+
+                            case 0xc08ec0ee:    //object construction bin
+                                fileextension = ".objectConstructionBin";
+                                break;
+
+                            case 0x4045d294:    //slot xml
+                                fileextension = ".slotXml";
+                                break;
+
+                            case 0xcf60795e:    //swm
+                                fileextension = ".swm";
+                                break;
+
+                            case 0x9752e396:    //SwarmBin
+                                fileextension = ".SwarmBin";
+                                break;
+
+                            case 0xe0d83029:    //XmlBin
+                                fileextension = ".XmlBin";
+                                break;
+
+                            case 0xa6856948:    //CABXml
+                                fileextension = ".CABXml";
+                                break;
+
+                            case 0xc644f440:    //CABBin
+                                fileextension = ".CABBin";
+                                break;
+
+                            case 0x5bca8c06:    //big
+                                fileextension = ".big";
+                                break;
+
+                            case 0xb61215e9:  //LightBoxXml
+                                fileextension = ".lightBoxXml";
+                                break;
+
+                            case 0xd6215201:  //LightBoxBin
+                                fileextension = ".lightBoxBin";
+                                break;
+
+                            case 0x1e1e6516:  //xmb
+                                fileextension = ".xmb";
                                 break;
 
                             default:
