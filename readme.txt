@@ -1,12 +1,11 @@
 ======= MORCUTOOL =======
 
-A tool for mass exporting files from the MySims series .package archives. 
+A tool that opens MySims series .package archives. 
 
-It currently supports both MySims Agents and MySims Skyheroes, as they were incompatible
-with the existing package editors designed for The Sims 3.
+It currently supports packages from MySims Kingdom, Agents, and Skyheroes.
+You can then export the individual files stored in the archive. (or, in the case of Skyheroes, it dumps them all automatically)
 
-This program also converts MySims Skyheroes models to .obj.
-
+This program also converts MySims Skyheroes models to .obj. (You may have to set the deprecated radio button accordingly for this to work).
 
 
 ======= USAGE NOTES =======
