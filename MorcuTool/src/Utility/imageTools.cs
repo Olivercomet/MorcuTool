@@ -11,86 +11,128 @@ namespace MorcuTool
     {
         public static List<byte> ConvertToTPL(string filename, byte[] file)
         {
-
             List<byte> output = new List<byte>();
-
-
-            File.WriteAllBytes(filename + ".tpltemp", file);
-
-            using (BinaryReader reader = new BinaryReader(File.Open(filename + ".tpltemp", FileMode.Open)))
-            {
-                uint startoffile = 0;
 
                 uint magic = 0;
                 uint flags = 0;
+
+                byte version = file[5];
+
+                int startoffile = 0;
+                
                 uint imagesize = 0;
 
                 ushort width = 0;
                 ushort height = 0;
 
-                uint imageformat = 0;
+                byte imageformat = 0;
                 uint imagecount = 0;
 
-                uint imageoffset = 0;
+                int imageoffset = 0;
 
-                if (global.activePackage.packageType == Package.PackageType.SkyHeroes && utility.ReverseEndian(reader.ReadUInt32()) != 0)        //skip those annoying extra headers from MySims SkyHeroes
+                int pos = 0;
+
+                if (global.activePackage.packageType == Package.PackageType.SkyHeroes && utility.ReverseEndian(BitConverter.ToUInt32(file,pos)) != 0)        //skip those annoying extra headers from MySims SkyHeroes
                 {
                     startoffile = 0x50;
                 }
 
-                reader.BaseStream.Position = startoffile;
+                pos = startoffile;
 
-                if (global.activePackage.packageType == Package.PackageType.Agents || global.activePackage.packageType == Package.PackageType.Kingdom)
+            if (global.activePackage.packageType == Package.PackageType.Agents || global.activePackage.packageType == Package.PackageType.Kingdom)
                 {
-                    magic = utility.ReverseEndian(reader.ReadUInt32());
-                    flags = utility.ReverseEndian(reader.ReadUInt32());
-                    imagesize = utility.ReverseEndian(reader.ReadUInt32());
+                    magic = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    pos+=4;
+                    flags = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    pos+=4;
 
-                    reader.BaseStream.Position += 0x0C;
+                     if (version == 2)  //MYSIMS
+                        {
+                        pos = 0x1C;
 
-                    width = utility.ReverseEndianShort(reader.ReadUInt16());
-                    height = utility.ReverseEndianShort(reader.ReadUInt16());
+                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 2;
+                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 5;
 
-                    imageformat = utility.ReverseEndian(reader.ReadUInt32());
-                    imagecount = utility.ReverseEndian(reader.ReadUInt32());
+                        imageformat = file[pos];
+                        pos++;
+                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        pos += 4;
 
-                    reader.BaseStream.Position += 0x14;
+                        pos += 0x14;
 
-                    imageoffset = utility.ReverseEndian(reader.ReadUInt32());
+                        imageoffset = 0x4C;
+                        pos += 4;
+                        File.WriteAllBytes("test.tpl",file);
+
+                        imagesize = (uint)(height * width * 4);
+                        }
+                    else if (version == 3)   //MYSIMS KINGDOM AND AGENTS
+                        {
+                        imagesize = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        pos += 4;
+
+                        pos += 0x0C;
+
+                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 2;
+                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        pos += 5;
+
+                        imageformat = file[pos];
+                        pos ++;
+                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        pos += 4;
+
+                        pos += 0x14;
+
+                        imageoffset = utility.ReverseEndianSigned(BitConverter.ToInt32(file, pos));
+                        pos += 4;
+                        }
                 }
                 else if (global.activePackage.packageType == Package.PackageType.SkyHeroes)
                 {
-                    magic = utility.ReverseEndian(reader.ReadUInt32());
-                    flags = utility.ReverseEndian(reader.ReadUInt32());
+                    magic = utility.ReverseEndian(BitConverter.ToUInt32(file,pos));
+                    pos += 4;
+                    flags = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    pos += 4;
 
-                    reader.BaseStream.Position += 0x06;
-                    width = utility.ReverseEndianShort(reader.ReadUInt16());
+                    pos += 6;
+                    width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                    pos += 2;
 
-                    reader.BaseStream.Position += 0x02;
-                    height = utility.ReverseEndianShort(reader.ReadUInt16());
+                    pos += 2;
+                    height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
 
-                    reader.BaseStream.Position += 0x28;
+                    pos += 0x2D;
 
-                    imageformat = utility.ReverseEndian(reader.ReadUInt32());
+                    imageformat = file[pos];
+                    pos += 1;
 
-                    imageoffset = ((uint)reader.BaseStream.Position + 0x20) - startoffile;
-                }
+                    imageoffset = (pos + 0x20) - startoffile;
+                }   
 
 
-                reader.BaseStream.Position = startoffile + imageoffset;
+                pos = startoffile + imageoffset;
 
                 if (global.activePackage.packageType == Package.PackageType.SkyHeroes)
                 {
-                    imagesize = (uint)((reader.BaseStream.Length - startoffile) - (reader.BaseStream.Position - startoffile));
+                    imagesize = (uint)((file.Length - startoffile) - (pos - startoffile));
                 }
 
-                List<Byte[]> imagesubblocks = new List<Byte[]>();
+                byte[] imageData = new byte[file.Length - pos];
+
+                Array.Copy(file,pos,imageData,0,file.Length-pos);
+
+                //List<Byte[]> imagesubblocks = new List<Byte[]>();
 
 
-                for (int i = 0; i < imagesize / 8; i++)
-                {
-                    imagesubblocks.Add(BitConverter.GetBytes(reader.ReadUInt64()));
-                }
+               // for (int i = 0; i < imagesize / 8; i++)
+               // {
+                //    imagesubblocks.Add(BitConverter.GetBytes(BitConverter.ToUInt64(file,pos)));
+                //    pos += 8;
+               // }
 
                 //create tpl file byte array
 
@@ -101,7 +143,10 @@ namespace MorcuTool
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndianShort(height)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndianShort(width)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(imageformat)));
+                output.Add(0x00);
+                output.Add(0x00);
+                output.Add(0x00);
+                output.Add(imageformat);
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000060)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
@@ -121,13 +166,13 @@ namespace MorcuTool
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
                 output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
 
-                for (int i = 0; i < imagesize / 8; i++)
-                {
-                    output.AddRange(imagesubblocks[i]);
-                }
-            }
 
-            File.Delete(filename + ".tpltemp");
+                output.AddRange(imageData);
+                //for (int i = 0; i < imagesize / 8; i++)
+                //{
+                 //   output.AddRange(imagesubblocks[i]);
+                //}
+
             return output;
         }
 

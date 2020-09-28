@@ -33,7 +33,33 @@ namespace MorcuTool
             return BitConverter.ToUInt32(bytes, 0);
         }
 
-        public static ulong ReverseEndianLong(ulong input)
+        public static int ReverseEndianSigned(int input)
+        {
+            byte[] bytes = BitConverter.GetBytes(input);
+
+            // if (isMSA.Checked || isSkyHeroes.Checked)
+            //    {
+            Array.Reverse(bytes, 0, bytes.Length);
+            //    }
+
+            return BitConverter.ToInt32(bytes, 0);
+        }
+
+
+        public static long ReverseEndianLong(long input)
+        {
+            byte[] bytes = BitConverter.GetBytes(input);
+
+            // if(isMSA.Checked || isSkyHeroes.Checked)
+            //    {
+            Array.Reverse(bytes, 0, bytes.Length);
+            //   }
+
+
+            return BitConverter.ToInt64(bytes, 0);
+        }
+
+        public static ulong ReverseEndianULong(ulong input)
         {
             byte[] bytes = BitConverter.GetBytes(input);
 

@@ -65,8 +65,8 @@ namespace MorcuTool
 
                 for (uint i = 0; i < 0xEDB4; i++)
                 {
-                    ulong hash = utility.ReverseEndianLong(reader.ReadUInt64());
-                    ulong index = utility.ReverseEndianLong(reader.ReadUInt64());
+                    ulong hash = utility.ReverseEndianULong(reader.ReadUInt64());
+                    ulong index = utility.ReverseEndianULong(reader.ReadUInt64());
 
                     VaultHashesAndIndexes.Add(hash, index);
                 }

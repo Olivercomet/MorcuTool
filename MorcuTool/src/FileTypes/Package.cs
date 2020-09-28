@@ -22,8 +22,7 @@ namespace MorcuTool
         public uint unknown1 = 0x00;
         public uint unknown2 = 0x00;
         public uint unknown3 = 0x00;
-        public uint created = 0x00;
-        public uint modified = 0x00;
+        public DateTime date = new DateTime();
         public uint indexmajorversion = 0x00;
 
         public uint filecount = 0x00;
@@ -97,7 +96,7 @@ namespace MorcuTool
 
                     default:
                         MessageBox.Show("This is not a valid package!", "Package not supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        Console.WriteLine("invalid signature");
+                        Console.WriteLine("invalid file magic");
                         break;
                     }
 
@@ -109,8 +108,7 @@ namespace MorcuTool
                     unknown1 = utility.ReverseEndian(reader.ReadUInt32());
                     unknown2 = utility.ReverseEndian(reader.ReadUInt32());
                     unknown3 = utility.ReverseEndian(reader.ReadUInt32());
-                    created = utility.ReverseEndian(reader.ReadUInt32());
-                    modified = utility.ReverseEndian(reader.ReadUInt32());
+                    date = DateTime.FromBinary(utility.ReverseEndianLong(reader.ReadInt64()));
                     indexmajorversion = utility.ReverseEndian(reader.ReadUInt32());
 
                     filecount = utility.ReverseEndian(reader.ReadUInt32());
@@ -134,8 +132,7 @@ namespace MorcuTool
                     unknown1 = reader.ReadUInt32();
                     unknown2 = reader.ReadUInt32();
                     unknown3 = reader.ReadUInt32();
-                    created = reader.ReadUInt32();
-                    modified = reader.ReadUInt32();
+                    date = DateTime.FromBinary(utility.ReverseEndianLong(reader.ReadInt64()));
                     indexmajorversion = reader.ReadUInt32();
 
                     filecount = reader.ReadUInt32();
@@ -152,7 +149,7 @@ namespace MorcuTool
                     reserved2 = reader.ReadUInt32();
                 }
 
-
+                Console.WriteLine("Package date: " + date.ToString());
 
 
                 reader.BaseStream.Position = indexoffset;
@@ -161,7 +158,7 @@ namespace MorcuTool
 
                 if (packageType == PackageType.Agents)
                 {
-                    indexnumberofentries = utility.ReverseEndianLong(reader.ReadUInt64());
+                    indexnumberofentries = utility.ReverseEndianULong(reader.ReadUInt64());
 
                     for (uint i = 0; i < indexnumberofentries; i++)  //a bunch of entries that describe how many files there are of each type
                     {
@@ -181,7 +178,7 @@ namespace MorcuTool
                     for (uint i = 0; i < filecount; i++)     //go through the files, they are organised by type, one type after the other. (So X number of type A, as described above, then Y number of type B...)
                     {
                         Subfile newSubfile = new Subfile();
-                        newSubfile.hash = utility.ReverseEndianLong(reader.ReadUInt64());
+                        newSubfile.hash = utility.ReverseEndianULong(reader.ReadUInt64());
                         newSubfile.fileoffset = utility.ReverseEndian(reader.ReadUInt32());
                         newSubfile.filesize = utility.ReverseEndian(reader.ReadUInt32());
                         newSubfile.typeID = IndexEntries[currenttypeindexbeingprocessed].typeID;
@@ -204,25 +201,29 @@ namespace MorcuTool
                         subfiles.Add(newSubfile);
                     }
                 }
-                else     //MSK etc, don't know if it works
+                else     //MySims, MySims Kingdom etc, don't know if all the index versions work
                 {
                     uint indexversion = reader.ReadUInt32();
 
-                    if (indexversion == 0)
+                    if (indexversion == 0)  //MYSIMS USES THIS, SO YOU NEED TO IMPLEMENT IT
                     {
+                        Console.WriteLine("index version 0");
                         for (uint i = 0; i < filecount; i++)
                         {
                             Subfile newSubfile = new Subfile();
 
                             newSubfile.typeID = reader.ReadUInt32();
-                            reader.BaseStream.Position += 4;
                             newSubfile.groupID = reader.ReadUInt32();
-                            newSubfile.hash = reader.ReadUInt32();
+                            newSubfile.hash = reader.ReadUInt64();
                             newSubfile.fileoffset = reader.ReadUInt32();
-
-                            reader.BaseStream.Position += 0x04;
-                            newSubfile.filesize = reader.ReadUInt32();
+                            newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
+                            newSubfile.uncompressedsize = reader.ReadUInt32();
                             reader.BaseStream.Position += 0x04; //flags
+
+                            if (newSubfile.filesize == newSubfile.uncompressedsize)
+                            {
+                                newSubfile.uncompressedsize = 0;
+                            }
 
                             subfiles.Add(newSubfile);
                         }
@@ -234,11 +235,15 @@ namespace MorcuTool
                     }
                     else if (indexversion == 2)
                     {
+                        Console.WriteLine("index version 2");
+
+                        reader.BaseStream.Position += 4;
+
                         for (uint i = 0; i < filecount; i++)
                         {
                             Subfile newSubfile = new Subfile();
 
-                            reader.BaseStream.Position += 4;
+                           
                             newSubfile.typeID = reader.ReadUInt32();
                             newSubfile.hash = reader.ReadUInt64();   //or might be hash
                             newSubfile.fileoffset = reader.ReadUInt32();
@@ -256,6 +261,7 @@ namespace MorcuTool
                     }
                     else if (indexversion == 3)
                     {
+                        Console.WriteLine("index version 3");
                         uint allFilesTypeID = reader.ReadUInt32();
                         reader.BaseStream.Position += 4;
 
@@ -449,11 +455,11 @@ namespace MorcuTool
 
 
 
-                        byte[] newfilenameasbytes = BitConverter.GetBytes(utility.ReverseEndianLong(subfiles[i].hash));
+                        byte[] newfilenameasbytes = BitConverter.GetBytes(utility.ReverseEndianULong(subfiles[i].hash));
 
                         subfiles[i].filename = "0x";
 
-                        ulong newfilenameasulong = utility.ReverseEndianLong(subfiles[i].hash);
+                        ulong newfilenameasulong = utility.ReverseEndianULong(subfiles[i].hash);
 
 
                         if (global.activeVault.VaultHashesAndFileNames.Keys.Contains(subfiles[i].hash))
