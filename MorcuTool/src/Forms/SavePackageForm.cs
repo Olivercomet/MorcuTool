@@ -30,7 +30,16 @@ namespace MorcuTool
 
         private void CreatePackageButton_Click(object sender, EventArgs e)
         {
+            if (MSKradiobutton.Checked)
+                {
+                global.activePackage.packageType = Package.PackageType.Kingdom;
+                }
+            else if (MSAradiobutton.Checked)
+                {
+                global.activePackage.packageType = Package.PackageType.Agents;
+                }
 
+            global.activePackage.RebuildPackage();
         }
     }
 }

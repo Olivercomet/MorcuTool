@@ -286,7 +286,7 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
-                    if (MSKindexversion == 4)  
+                    else if (MSKindexversion == 4)  
                     {
                         Console.WriteLine("index version 4");
                         reader.BaseStream.Position += 4;
@@ -852,7 +852,7 @@ namespace MorcuTool
 
             utility.AddUIntToList(output, ReverseEndianIfNeeded(indexmajorversion));
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(filecount));
+            utility.AddUIntToList(output, ReverseEndianIfNeeded((uint)subfiles.Count));
 
             //offset 0x28
 
@@ -890,40 +890,110 @@ namespace MorcuTool
                 output.Add(0x00);
                 }
 
-            //=====================================================================================
-            //ACTUALLY, ISN'T IT ORGANISED BY TYPE ID? (IN MSA, AT LEAST?) THAT MIGHT BE IMPORTANT
-            //and then, within a type id, it's alphabetical
-            //=====================================================================================
+            //sort by type ID, and within a type ID, by hash
+            subfiles = subfiles.OrderBy(s => s.typeID).ThenBy(s => s.hash).ToList();
 
-            foreach (Subfile f in subfiles)
+            List <IndexEntry> indexEntriesForWriting = new List<IndexEntry>();
+            List<uint> TypeIDsThatRequireCompression = new List<uint>();
+
+            int[] subfileOffsets = new int[subfiles.Count];
+
+            for(int f = 0; f < subfiles.Count; f++)
                 {
-                if (f.filebytes == null || f.filebytes.Length == 0) //then the file was not modified or read, so transfer it directly from the old package
+                subfileOffsets[f] = output.Count;
+
+                bool typeIDhasIndexEntry = false;
+
+                foreach (IndexEntry entry in indexEntriesForWriting)
                     {
-                    for (int i = 0; i < f.filesize; i++)
+                    if(entry.typeID == subfiles[f].typeID)
                         {
-                        output.Add(filebytes[f.fileoffset + i]);
+                        entry.typeNumberOfInstances++;
+                        typeIDhasIndexEntry = true;
+                        break;
+                        }
+                    }
+
+                if (!typeIDhasIndexEntry)
+                    {
+                    IndexEntry newIndexEntry = new IndexEntry();
+                    newIndexEntry.typeID = subfiles[f].typeID;
+                    newIndexEntry.groupID = subfiles[f].groupID;        //TODO: if files are compressed then group ID should be 2! Otherwise, 0
+                    newIndexEntry.indexnulls = 0;
+                    newIndexEntry.typeNumberOfInstances = 1;
+
+                    if(newIndexEntry.groupID != 0)
+                        {
+                        TypeIDsThatRequireCompression.Add(newIndexEntry.typeID);
+                        }
+
+                    indexEntriesForWriting.Add(newIndexEntry);
+                    }
+
+                if (subfiles[f].filebytes == null || subfiles[f].filebytes.Length == 0) //then the file was not modified or read, so transfer it directly from the old package
+                    {
+                    for (int i = 0; i < subfiles[f].filesize; i++)
+                        {
+                        output.Add(filebytes[subfiles[f].fileoffset + i]);
                         }
                     }
                 else //if it was modified or read, use the bytes from its filebytes array
                     {
-                    for (int i = 0; i < f.filebytes.Length; i++)
+                    subfiles[f].filesize = (uint)subfiles[f].filebytes.Length;
+                    for (int i = 0; i < subfiles[f].filebytes.Length; i++)
                         {
-                        output.Add(f.filebytes[i]);
+                        output.Add(subfiles[f].filebytes[i]);
+                        MessageBox.Show("Need to ensure that the file is compressed if it needs to be");
                         }
+                    }
+
+                while(output.Count % 0x20 != 0)
+                    {
+                    output.Add(0x00);   //pad to multiple of 0x20
                     }
                 }
 
             //that should bring us up to the start of the index table
 
-            //=====================================================================================
-            //ACTUALLY, ISN'T IT ORGANISED BY TYPE ID? (IN MSA, AT LEAST?) THAT MIGHT BE IMPORTANT.
-            //and then, within a type id, it's alphabetical
-            //=====================================================================================
+            uint newIndexOffset = (uint)output.Count;
 
+            if (packageType == PackageType.Agents)
+                {
+                utility.AddULongToList(output,utility.ReverseEndianULong((ulong)indexEntriesForWriting.Count));
 
+                for (int i = 0; i < indexEntriesForWriting.Count; i++)  //a bunch of entries that describe how many files there are of each type
+                    {
+                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].typeID));
+                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].groupID));
+                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].typeNumberOfInstances));
+                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].indexnulls));
+                    }
 
+                for (int i = 0; i < subfiles.Count; i++)     //go through the files and add them to the index list. They are organised by type, one type after the other. (So X number of type A, as described above, then Y number of type B...) Within a type, they are organised by hash
+                    {
+                    utility.AddULongToList(output, utility.ReverseEndianULong(subfiles[i].hash));
+                    utility.AddIntToList(output, utility.ReverseEndianSigned(subfileOffsets[i]));
+                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].filesize));
+                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].typeID));
+                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].groupID));
 
+                    if(TypeIDsThatRequireCompression.Contains(subfiles[i].typeID))
+                        {
+                        utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].uncompressedsize));
+                        }
+                    }
 
+                utility.OverWriteUIntInList(output, 0x28, ReverseEndianIfNeeded(newIndexOffset));
+                utility.OverWriteUIntInList(output, 0x2C, ReverseEndianIfNeeded((uint)(output.Count - newIndexOffset)));     
+                utility.OverWriteUIntInList(output, 0x44, ReverseEndianIfNeeded(newIndexOffset));      
+                }
+            else 
+                {
+                MessageBox.Show("only Agents works at the moment");
+                
+                }
+
+            File.WriteAllBytes("test.package", output.ToArray());
         }
     }
 

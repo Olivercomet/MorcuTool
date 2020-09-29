@@ -47,6 +47,7 @@
             this.subfileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportSubfile = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.savePackageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.subfileContextMenu.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -104,6 +105,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.savePackageToolStripMenuItem,
             this.convertModelToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
@@ -119,7 +121,7 @@
             // convertModelToolStripMenuItem
             // 
             this.convertModelToolStripMenuItem.Name = "convertModelToolStripMenuItem";
-            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
+            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.convertModelToolStripMenuItem.Text = "Convert Model";
             this.convertModelToolStripMenuItem.Click += new System.EventHandler(this.convertModelToolStripMenuItem_Click);
             // 
@@ -198,7 +200,7 @@
             // exportSubfile
             // 
             this.exportSubfile.Name = "exportSubfile";
-            this.exportSubfile.Size = new System.Drawing.Size(210, 24);
+            this.exportSubfile.Size = new System.Drawing.Size(121, 24);
             this.exportSubfile.Text = "Export";
             this.exportSubfile.Click += new System.EventHandler(this.exportSubfile_Click);
             // 
@@ -213,6 +215,13 @@
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "DEPRECATED (Do not use)";
+            // 
+            // savePackageToolStripMenuItem
+            // 
+            this.savePackageToolStripMenuItem.Name = "savePackageToolStripMenuItem";
+            this.savePackageToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.savePackageToolStripMenuItem.Text = "Save Package";
+            this.savePackageToolStripMenuItem.Click += new System.EventHandler(this.savePackageToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -257,6 +266,7 @@
         private System.Windows.Forms.ContextMenuStrip subfileContextMenu;
         private System.Windows.Forms.ToolStripMenuItem exportSubfile;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ToolStripMenuItem savePackageToolStripMenuItem;
     }
 }
 

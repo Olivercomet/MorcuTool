@@ -112,6 +112,15 @@ namespace MorcuTool
             list.Add((byte)(integer >> 24));
         }
 
+
+        public static void OverWriteUIntInList(List<byte> list, int pos, uint integer)
+        {
+            list[pos] = ((byte)integer);
+            list[pos + 1] = (byte)(integer >> 8);
+            list[pos + 2] = (byte)(integer >> 16);
+            list[pos + 3] = (byte)(integer >> 24);
+        }
+
         public static void AddIntToList(List<byte> list, int integer)
         {
             list.Add((byte)integer);

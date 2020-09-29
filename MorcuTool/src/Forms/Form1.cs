@@ -1101,5 +1101,12 @@ namespace MorcuTool
         {
             treeNodesAndSubfiles[FileTree.SelectedNode].ExportFile();
         }
+
+        private void savePackageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Work in progress!");
+            SavePackageForm savePackageForm = new SavePackageForm();
+            savePackageForm.Show();
+        }
     }
 }
