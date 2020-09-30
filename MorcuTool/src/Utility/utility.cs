@@ -9,6 +9,8 @@ namespace MorcuTool
     public static class utility
     {
 
+        public static bool send_unfinished_notification = true;
+
         public static ushort ReverseEndianShort(ushort input)
         {
             byte[] bytes = BitConverter.GetBytes(input);
@@ -138,6 +140,16 @@ namespace MorcuTool
         {
             list.Add((byte)input);
             list.Add((byte)(input >> 8));
+        }
+
+        public static byte[] Compress_QFS(byte[] filebytes)
+        { 
+            if(send_unfinished_notification)
+                {
+                System.Windows.Forms.MessageBox.Show("NEED TO ADD QFS COMPRESSION FUNCTION HERE");
+                send_unfinished_notification = false;
+                }
+            return filebytes;
         }
 
 

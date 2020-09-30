@@ -17,6 +17,9 @@ namespace MorcuTool
         public uint filesize;
         public string filename;
 
+        public bool has_been_decompressed = true;
+        public bool should_be_compressed_when_in_package = false;
+
         public uint uncompressedsize; //only used by compressed files
 
         public uint typeID;
@@ -38,6 +41,7 @@ namespace MorcuTool
                 if (uncompressedsize > 0) //if it's a compressed file
                 {
                     filebytes = utility.Decompress_QFS(filebytes);
+                    has_been_decompressed = true;
                 }
 
                 if (fileextension == ".tpl")
@@ -56,7 +60,7 @@ namespace MorcuTool
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     File.WriteAllBytes(saveFileDialog1.FileName, filebytes);
-                    if (global.activePackage.date.Year > 0)
+                    if (global.activePackage.date.Year > 1)
                         {
                         File.SetLastWriteTime(saveFileDialog1.FileName, global.activePackage.date);
                         }

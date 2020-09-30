@@ -188,6 +188,7 @@ namespace MorcuTool
 
                         if (IndexEntries[currenttypeindexbeingprocessed].groupID != 0)   //it's compressed
                         {
+                            newSubfile.should_be_compressed_when_in_package = true;
                             newSubfile.uncompressedsize = utility.ReverseEndian(reader.ReadUInt32());
                         }
 
@@ -224,6 +225,7 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
+                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
                             }
 
@@ -255,6 +257,7 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
+                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
                             }
 
@@ -280,6 +283,7 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
+                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
                             }
 
@@ -303,6 +307,7 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
+                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
                             }
 
@@ -315,6 +320,7 @@ namespace MorcuTool
                         return;
                         }
                 }
+
 
                 //extract files
 
@@ -329,6 +335,13 @@ namespace MorcuTool
 
                 for (int i = 0; i < filecount; i++)
                 {
+
+                    if (subfiles[i].should_be_compressed_when_in_package)
+                        {
+                        subfiles[i].has_been_decompressed = false;    //set default state of a compressed file to compressed
+                        }
+
+
                     {
                         string fileextension = null;
 
@@ -574,6 +587,7 @@ namespace MorcuTool
                         }
 
                         subfiles[i].fileextension = fileextension;
+
 
 
                         Vault.luaString typeIDRealString = global.activeVault.GetLuaStringWithHash(subfiles[i].typeID);
@@ -918,7 +932,16 @@ namespace MorcuTool
                     {
                     IndexEntry newIndexEntry = new IndexEntry();
                     newIndexEntry.typeID = subfiles[f].typeID;
-                    newIndexEntry.groupID = subfiles[f].groupID;        //TODO: if files are compressed then group ID should be 2! Otherwise, 0
+
+                    if (subfiles[f].should_be_compressed_when_in_package)
+                        {
+                        newIndexEntry.groupID = 2;
+                    }
+                    else
+                        {
+                        newIndexEntry.groupID = 0;
+                        }
+
                     newIndexEntry.indexnulls = 0;
                     newIndexEntry.typeNumberOfInstances = 1;
 
@@ -928,6 +951,15 @@ namespace MorcuTool
                         }
 
                     indexEntriesForWriting.Add(newIndexEntry);
+                    }
+
+
+                if (subfiles[f].should_be_compressed_when_in_package)
+                    {
+                    if (subfiles[f].has_been_decompressed)  //if it was decompressed by the user then compress it
+                        {
+                        subfiles[f].filebytes = utility.Compress_QFS(filebytes);
+                        }
                     }
 
                 if (subfiles[f].filebytes == null || subfiles[f].filebytes.Length == 0) //then the file was not modified or read, so transfer it directly from the old package
