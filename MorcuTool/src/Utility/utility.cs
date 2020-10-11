@@ -149,6 +149,33 @@ namespace MorcuTool
                 System.Windows.Forms.MessageBox.Show("NEED TO ADD QFS COMPRESSION FUNCTION HERE");
                 send_unfinished_notification = false;
                 }
+
+            List<byte> output = new List<byte>();
+
+            int length = filebytes.Length;
+
+            output.Add(0x10);
+            output.Add(0xFB);
+
+            int pos = 5;
+
+            while (pos < filebytes.Length)
+                {
+                
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                }
+
             return filebytes;
         }
 
@@ -156,7 +183,6 @@ namespace MorcuTool
 
         public static byte[] Decompress_QFS(byte[] filebytes)
         {
-
             int currentoffset = 0;
 
             currentoffset += 0x02; //skip 10FB header
