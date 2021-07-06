@@ -17,6 +17,8 @@ namespace MorcuTool
         public uint filesize;
         public string filename;
 
+        public string hashString;
+
         public bool has_been_decompressed = true;
         public bool should_be_compressed_when_in_package = false;
 
@@ -29,9 +31,12 @@ namespace MorcuTool
 
         public TreeNode treeNode;
 
+        public hkxFile hkx; //if needed
+        public MsaCollision msaCol; //if needed
+        public LLMF llmf; //if needed
 
-        public void ExportFile() {
-
+        public void Load()
+        {
             using (BinaryReader reader = new BinaryReader(File.Open(global.activePackage.filename, FileMode.Open)))
             {
                 reader.BaseStream.Position = fileoffset;
@@ -49,24 +54,61 @@ namespace MorcuTool
                     filebytes = imageTools.ConvertToTPL(filename, filebytes).ToArray();
                 }
 
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
-                saveFileDialog1.FileName = Path.GetFileName(filename);
-
-                saveFileDialog1.Title = "Export "+ Path.GetFileName(filename);
-                saveFileDialog1.CheckPathExists = true;
-                saveFileDialog1.Filter = fileextension.ToUpper() +" file (*" + fileextension+")|*"+ fileextension+"|All files (*.*)|*.*";
-
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                switch (typeID)
                 {
-                    File.WriteAllBytes(saveFileDialog1.FileName, filebytes);
-                    if (global.activePackage.date.Year > 1)
-                        {
-                        File.SetLastWriteTime(saveFileDialog1.FileName, global.activePackage.date);
-                        }
-                   
+                    case 0xD5988020:  //MySims Kingdom HKX 
+                        hkx = new hkxFile(this);
+                        break;
+                    case 0x1A8FEB14:  //MySims Agents mesh collision
+                        msaCol = new MsaCollision(this);
+                        File.WriteAllLines(filename+".obj",msaCol.obj);
+                        break;
+                    case 0xA5DCD485:                     //LLMF level bin MSA
+                    case 0x58969018:                     //LLMF level bin MSK   "LevelData"
+                        llmf = new LLMF(this);
+                        llmf.GenerateReport();
+                        break;
                 }
             }
+        }
+
+        public void Unload() {
+            filebytes = new byte[0];
+        }
+
+
+        public void ExportFile(bool silent, string silentPath) {
+
+                if (filebytes == null || filebytes.Length == 0) {
+                    Load();
+                }
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                if (!silent)
+                { 
+                    saveFileDialog1.FileName = Path.GetFileName(filename);
+
+                    saveFileDialog1.Title = "Export " + Path.GetFileName(filename);
+                    saveFileDialog1.CheckPathExists = true;
+                    saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
+
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        silentPath = saveFileDialog1.FileName;
+                    }
+                }
+
+                if (silentPath != null && silentPath != "") {
+                    File.WriteAllBytes(silentPath, filebytes);
+                    if (global.activePackage.date.Year > 1)
+                    {
+                        File.SetLastWriteTime(silentPath, global.activePackage.date);
+                    }
+                }                      
+          
+            
         }
 
     }

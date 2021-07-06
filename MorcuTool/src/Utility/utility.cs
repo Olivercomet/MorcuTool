@@ -11,6 +11,7 @@ namespace MorcuTool
 
         public static bool send_unfinished_notification = true;
 
+
         public static ushort ReverseEndianShort(ushort input)
         {
             byte[] bytes = BitConverter.GetBytes(input);
@@ -45,6 +46,17 @@ namespace MorcuTool
             //    }
 
             return BitConverter.ToInt32(bytes, 0);
+        }
+
+        public static int ReadInt32BigEndian(byte[] input, int pos)
+        {
+            return (input[pos + 3]) + (input[pos + 2] <<8) + (input[pos + 1] <<16) + (input[pos] << 24);
+        }
+
+        public static float ReadSingleBigEndian(byte[] input, int pos)
+        {
+            byte[] bytes = new byte[] {input[pos+3],input[pos+2],input[pos+1],input[pos] };
+            return BitConverter.ToSingle(bytes,0);
         }
 
 
@@ -141,6 +153,7 @@ namespace MorcuTool
             list.Add((byte)input);
             list.Add((byte)(input >> 8));
         }
+
 
         public static byte[] Compress_QFS(byte[] filebytes)
         { 

@@ -32,9 +32,12 @@ namespace MorcuTool
             if (e.Button == MouseButtons.Right)
             {
                 if (treeNodesAndSubfiles.Keys.Contains(FileTree.SelectedNode))
-                    {
+                {
                     subfileContextMenu.Show(Cursor.Position);
-                    }
+                }
+                else if (FileTree.SelectedNode == FileTree.Nodes[0]) {
+                    packageRootContextMenu.Show(Cursor.Position);
+                }
             }
         }
 
@@ -89,8 +92,6 @@ namespace MorcuTool
                     meshcount = utility.ReverseEndian(reader.ReadUInt32());
                     meshtableoffset = utility.ReverseEndian(reader.ReadUInt32());
 
-
-
                     for (int i = 0; i < meshcount; i++)
                     {
                         reader.BaseStream.Position = meshtableoffset + (i * 4);
@@ -98,10 +99,39 @@ namespace MorcuTool
 
                         reader.BaseStream.Position = meshInfoTableOffset;
 
-                        uint primBankSize = utility.ReverseEndian(reader.ReadUInt32());
-                        uint primBankOffset = utility.ReverseEndian(reader.ReadUInt32());
+                        uint displayListSize = utility.ReverseEndian(reader.ReadUInt32());
+                        uint displayListOffset = utility.ReverseEndian(reader.ReadUInt32());
                         uint numVertDescriptors = utility.ReverseEndian(reader.ReadUInt32());
-                        uint vertDescriptorStartOffset = utility.ReverseEndian(reader.ReadUInt32());
+                        uint vertDataOffset = utility.ReverseEndian(reader.ReadUInt32());
+
+                        ulong hash_of_MTST = utility.ReverseEndianULong(reader.ReadUInt64());
+                        uint unk = utility.ReverseEndian(reader.ReadUInt32());
+                        uint unk2 = utility.ReverseEndian(reader.ReadUInt32()); 
+
+                        float boundsMinX = utility.ReverseEndianSingle(reader.ReadSingle());
+                        float boundsMinY = utility.ReverseEndianSingle(reader.ReadSingle());
+                        float boundsMinZ = utility.ReverseEndianSingle(reader.ReadSingle());
+
+                        float boundsMaxX = utility.ReverseEndianSingle(reader.ReadSingle());
+                        float boundsMaxY = utility.ReverseEndianSingle(reader.ReadSingle());
+                        float boundsMaxZ = utility.ReverseEndianSingle(reader.ReadSingle());
+
+                        uint unk3 = utility.ReverseEndian(reader.ReadUInt32());
+                        uint unk4 = utility.ReverseEndian(reader.ReadUInt32());
+
+                        uint unk5 = utility.ReverseEndian(reader.ReadUInt32()); //FNV-1 hash of "none" in MySims Kingdom. Different in Agents.
+
+                        reader.BaseStream.Position += 12;
+
+                        uint boneToMatrixBindingInfoOffset = utility.ReverseEndian(reader.ReadUInt32());
+                        uint boneNamesOffset = utility.ReverseEndian(reader.ReadUInt32());
+                        uint boneInfoOffset = utility.ReverseEndian(reader.ReadUInt32());
+
+                        //now read vertex data
+
+                        reader.BaseStream.Position = vertDataOffset;
+
+
                     }
                 }
                 else if (isSkyHeroes.Checked)
@@ -135,9 +165,6 @@ namespace MorcuTool
 
             using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
             {
-
-                bool MorcubusMode = morcubusModeBox.Checked;  //If true, this will export the second object in the file instead, which was necessary for Morcubus because he was not the first object in his file
-
 
                 uint startoffile = 0;
 
@@ -298,6 +325,8 @@ namespace MorcuTool
                 reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                 reader.BaseStream.Position += 0x04;
                 reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+
+                bool MorcubusMode = morcubusModeBox.Checked;
 
                 if (MorcubusMode)
                 {
@@ -1099,7 +1128,43 @@ namespace MorcuTool
 
         private void exportSubfile_Click(object sender, EventArgs e)
         {
-            treeNodesAndSubfiles[FileTree.SelectedNode].ExportFile();
+            treeNodesAndSubfiles[FileTree.SelectedNode].ExportFile(false, "");
+        }
+
+        private void exportAllContextMenuStripButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            saveFileDialog1.Title = "Select destination folder";
+            saveFileDialog1.FileName = "Save here";
+            saveFileDialog1.CheckPathExists = false;
+            saveFileDialog1.CheckFileExists = false;
+            saveFileDialog1.Filter = "Directory |directory";
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                foreach (TreeNode node in FileTree.Nodes[0].Nodes) {
+
+                    bool was_loaded_already = false;
+                    Subfile target = treeNodesAndSubfiles[node];
+
+                    if (target.filebytes == null || target.filebytes.Length == 0) {
+                        target.Load();
+                    } else
+                    {
+                        was_loaded_already = true;
+                    }
+
+                    target.ExportFile(true,Path.Combine(Path.GetDirectoryName(saveFileDialog1.FileName),target.filename));
+
+                    if (!was_loaded_already) {
+                        target.Unload();
+                    }
+                }
+            }
+
+            MessageBox.Show("Export complete.");
         }
 
         private void savePackageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1107,6 +1172,49 @@ namespace MorcuTool
             MessageBox.Show("Work in progress!");
             SavePackageForm savePackageForm = new SavePackageForm();
             savePackageForm.Show();
+        }
+
+        private void findByHashButton_Click(object sender, EventArgs e)
+        {
+            List<String> found = new List<string>();
+            found.Add("Found the following files with similar hashes:");
+
+            foreach (Subfile s in global.activePackage.subfiles) {
+                if (s.hashString.Contains(findByHashTextBox.Text)) {
+                    found.Add(s.filename);
+                }
+            }
+
+            if (found.Count > 1) {
+                string message = "";
+
+                foreach (string s in found) {
+                    message += s + "\n";
+                }
+
+                MessageBox.Show(message);
+
+                return;
+            }
+
+
+            MessageBox.Show("Not found");
+        }
+
+        private void vaultSearchButton_Click(object sender, EventArgs e)
+        {
+            if (global.activeVault == null){
+                return;
+            }
+
+            foreach (ulong hash in global.activeVault.VaultHashesAndFileNames.Keys) {
+
+                if (hash == ulong.Parse(vaultSearchTextBox.Text))
+                    {
+                    MessageBox.Show("Match found: "+ global.activeVault.VaultHashesAndFileNames[hash]);
+                    break;
+                    }
+            }
         }
     }
 }

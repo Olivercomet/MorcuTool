@@ -35,6 +35,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.savePackageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.convertModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.utilityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simsTPLToTPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,10 +48,18 @@
             this.subfileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportSubfile = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.savePackageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.packageRootContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exportAllContextMenuStripButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.findByHashButton = new System.Windows.Forms.Button();
+            this.findByHashTextBox = new System.Windows.Forms.TextBox();
+            this.vaultSearchButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.vaultSearchTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.subfileContextMenu.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.packageRootContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // isMSK
@@ -114,14 +123,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
             this.openToolStripMenuItem.Text = "Open Package";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // savePackageToolStripMenuItem
+            // 
+            this.savePackageToolStripMenuItem.Name = "savePackageToolStripMenuItem";
+            this.savePackageToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
+            this.savePackageToolStripMenuItem.Text = "Save Package";
+            this.savePackageToolStripMenuItem.Click += new System.EventHandler(this.savePackageToolStripMenuItem_Click);
             // 
             // convertModelToolStripMenuItem
             // 
             this.convertModelToolStripMenuItem.Name = "convertModelToolStripMenuItem";
-            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
             this.convertModelToolStripMenuItem.Text = "Convert Model";
             this.convertModelToolStripMenuItem.Click += new System.EventHandler(this.convertModelToolStripMenuItem_Click);
             // 
@@ -216,18 +232,84 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "DEPRECATED (Do not use)";
             // 
-            // savePackageToolStripMenuItem
+            // packageRootContextMenu
             // 
-            this.savePackageToolStripMenuItem.Name = "savePackageToolStripMenuItem";
-            this.savePackageToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.savePackageToolStripMenuItem.Text = "Save Package";
-            this.savePackageToolStripMenuItem.Click += new System.EventHandler(this.savePackageToolStripMenuItem_Click);
+            this.packageRootContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.packageRootContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportAllContextMenuStripButton});
+            this.packageRootContextMenu.Name = "subfileContextMenu";
+            this.packageRootContextMenu.Size = new System.Drawing.Size(144, 28);
+            // 
+            // exportAllContextMenuStripButton
+            // 
+            this.exportAllContextMenuStripButton.Name = "exportAllContextMenuStripButton";
+            this.exportAllContextMenuStripButton.Size = new System.Drawing.Size(143, 24);
+            this.exportAllContextMenuStripButton.Text = "Export All";
+            this.exportAllContextMenuStripButton.Click += new System.EventHandler(this.exportAllContextMenuStripButton_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(650, 41);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(193, 17);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Find file by hexadecimal hash";
+            // 
+            // findByHashButton
+            // 
+            this.findByHashButton.Location = new System.Drawing.Point(701, 89);
+            this.findByHashButton.Name = "findByHashButton";
+            this.findByHashButton.Size = new System.Drawing.Size(75, 23);
+            this.findByHashButton.TabIndex = 15;
+            this.findByHashButton.Text = "Find";
+            this.findByHashButton.UseVisualStyleBackColor = true;
+            this.findByHashButton.Click += new System.EventHandler(this.findByHashButton_Click);
+            // 
+            // findByHashTextBox
+            // 
+            this.findByHashTextBox.Location = new System.Drawing.Point(653, 61);
+            this.findByHashTextBox.Name = "findByHashTextBox";
+            this.findByHashTextBox.Size = new System.Drawing.Size(190, 22);
+            this.findByHashTextBox.TabIndex = 13;
+            // 
+            // vaultSearchButton
+            // 
+            this.vaultSearchButton.Location = new System.Drawing.Point(701, 177);
+            this.vaultSearchButton.Name = "vaultSearchButton";
+            this.vaultSearchButton.Size = new System.Drawing.Size(75, 23);
+            this.vaultSearchButton.TabIndex = 18;
+            this.vaultSearchButton.Text = "Find";
+            this.vaultSearchButton.UseVisualStyleBackColor = true;
+            this.vaultSearchButton.Click += new System.EventHandler(this.vaultSearchButton_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(644, 129);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(211, 17);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Find vault entry by decimal hash";
+            // 
+            // vaultSearchTextBox
+            // 
+            this.vaultSearchTextBox.Location = new System.Drawing.Point(653, 149);
+            this.vaultSearchTextBox.Name = "vaultSearchTextBox";
+            this.vaultSearchTextBox.Size = new System.Drawing.Size(190, 22);
+            this.vaultSearchTextBox.TabIndex = 16;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(855, 474);
+            this.Controls.Add(this.vaultSearchButton);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.vaultSearchTextBox);
+            this.Controls.Add(this.findByHashButton);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.findByHashTextBox);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.FileTree);
             this.Controls.Add(this.morcubusModeBox);
@@ -242,6 +324,7 @@
             this.subfileContextMenu.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.packageRootContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -267,6 +350,14 @@
         private System.Windows.Forms.ToolStripMenuItem exportSubfile;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolStripMenuItem savePackageToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip packageRootContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem exportAllContextMenuStripButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button findByHashButton;
+        private System.Windows.Forms.TextBox findByHashTextBox;
+        private System.Windows.Forms.Button vaultSearchButton;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox vaultSearchTextBox;
     }
 }
 

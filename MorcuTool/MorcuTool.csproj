@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\FileTypes\Subfiles\HavokShapes\havokObject.cs" />
+    <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkArray.cs" />
+    <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkSimpleMeshShapeTriangle.cs" />
+    <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkSimpleMeshShape.cs" />
+    <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkBoxShape.cs" />
+    <Compile Include="src\FileTypes\Subfiles\hkxFile.cs" />
+    <Compile Include="src\FileTypes\Subfiles\LLMF.cs" />
+    <Compile Include="src\FileTypes\Subfiles\MsaCollision.cs" />
     <Compile Include="src\Forms\SavePackageForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +68,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="global.cs" />
+    <Compile Include="src\Utility\havokUtility.cs" />
     <Compile Include="src\Utility\imageTools.cs" />
     <Compile Include="src\FileTypes\Model\mdlObject.cs" />
     <Compile Include="src\FileTypes\Package.cs" />
@@ -97,7 +106,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

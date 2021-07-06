@@ -352,14 +352,14 @@ namespace MorcuTool
                                 break;
 
                             case 0xF9E50586:          //RMDL MSK     
-                                fileextension = ".rmdl";        //TYPE ID 29 54 E7 34
+                                fileextension = ".rmdl";        //          "ModelData"
                                 break;
 
                             case 0xE6640542:          //MATD MSA    
                                 fileextension = ".matd";        //TYPE ID E6 64 05 42
                                 break;
 
-                            case 0x01D0E75D:          //MATD MSK    
+                            case 0x01D0E75D:          //MATD MSK            "MaterialData"
                                 fileextension = ".matd";
                                 break;
 
@@ -367,28 +367,29 @@ namespace MorcuTool
                                 fileextension = ".tpl";         //TYPE ID 92 AA 4D 6A
                                 break;
 
-                            case 0x00B2D882:         //altered TPL MSK
+                            case 0x00B2D882:         //altered TPL MSK      "TextureData"
                                 fileextension = ".tpl";
+                                break;
+
+                            case 0x02019972:      //MTST Material Set MSK       "MaterialSetData"
+                                fileextension = ".mtst";
                                 break;
 
                             case 0x787E842A:         //MTST Material Set MSA
                                 fileextension = ".mtst";         //TYPE ID 78 7E 84 2A
                                 break;
 
-                            case 0x02019972:      //MTST MSK
-                                fileextension = ".mtst";
-                                break;
-
-                            case 0x0EFC1A82:         //FPST   footprint set.      contains a model footprint (ftpt) which is documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
-                                fileextension = ".fpst";
+                            case 0x8101A6EA:         //FPST   MySims Kingdom footprint set.    "FootprintData"    contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
+                            case 0x0EFC1A82:         //FPST   MySims Agents footprint set.                        contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
+                                fileextension = ".fpst";        //It's like a heatmap of where sims can walk? Or perhaps which surfaces should generate which kind of footprint (but wouldn't that mean that overhangs wouldn't work?)
                                 break;
 
                             case 0x2199BB60:        //BNKb    big endian BNK    MSA                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
                                 fileextension = ".bnk";        //TYPE ID 21 99 BB 60
                                 break;
 
-                            case 0xB6B5C271:        //BNKb    BNK    MSK (idk which endian, not tested)                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
-                                fileextension = ".bnk";
+                            case 0xB6B5C271:        //BNKb    BNK    MSK (idk which endian, not tested)       "AudioData"             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
+                                fileextension = ".bnk";                                         
                                 break;
 
                             case 0x2699C28D:        //BIGF
@@ -398,7 +399,7 @@ namespace MorcuTool
                             case 0x1A8FEB14:       //00 00 00 02             There's another, separate filetype that also begins with the 2 magic, but that one doesn't appear as frequently, so this one here is probably the collision type ID
                                                    //TYPE ID 1A 8F EB 14.  
                                 fileextension = ".collision";               //mesh collision
-                                break;
+                                break;                                  //there are mentions of 'rwphysics' in MSA's main.dol; could this mean Renderware Physics, which was indeed a product available at the time?
 
                             case 0x6B772503:       //FX
                                 fileextension = ".fx";
@@ -409,7 +410,7 @@ namespace MorcuTool
                                 containslua = true;
                                 break;
 
-                            case 0x2B8E2411:         //LUA MSK
+                            case 0x2B8E2411:         //LUA MSK  "LuaObjectData"
                                 fileextension = ".luac";
                                 containslua = true;
                                 break;
@@ -419,63 +420,80 @@ namespace MorcuTool
                                 break;
 
                             case 0x487BF9E4:     //SLOT MSK
-                                fileextension = ".slot";
+                                fileextension = ".slot";                //"SlotData"
                                 break;
 
                             case 0x28707864:       //particles file
                                 fileextension = ".particles";           //TYPE ID 28 70 78 64
                                 break;
 
-                            case 0x9614D3C0:       //00 00 00 01      
-                                fileextension = ".1";
-                                break;
-
-                            case 0x8FC0DE5A:       //00 00 00 02            bounding box collision (for very simple objects)
-                                fileextension = ".2";
-                                break;
-
-                            case 0x5027B4EC:       //00 00 00 03            slightly more complex bounding box collision (includes position and rotation?)
-                                fileextension = ".3";
-                                break;
-
-                            case 0x41C4A8EF:       //00 00 00 03        buildable region
+                            case 0x41C4A8EF:       //00 00 00 03        buildable region MSA
                                 fileextension = ".buildableregion";
+                                break;
+
+                            case 0xC84ACD30:       //buildable region MSK        "BuildableRegionData"
+                                fileextension = ".buildableregion";        
                                 break;
 
                             case 0xA5DCD485:                     //LLMF level bin MSA
                                 fileextension = ".llmf";
                                 break;
 
-                            case 0x58969018:                     //LLMF level bin MSK
+                            case 0x58969018:                     //LLMF level bin MSK   "LevelData"
                                 fileextension = ".llmf";
                                 break;
 
-                            case 0x4672E5BD:    //RIG MSA  
+                            case 0x4672E5BD:    //RIG MSA                   //Interesting granny struct info at 0x49CFDD in MSA's main.dol
                                 fileextension = ".grannyrig";             //TYPE ID 46 72 E5 BD
                                 break;
 
                             case 0x8EAF13DE:    //RIG MSK
-                                fileextension = ".grannyrig";
+                                fileextension = ".grannyrig";           // "RigData"
                                 break;
 
                             case 0xD6BEDA43:    //ANIMATION MSA
-                                fileextension = ".animation";             //TYPE ID D6 BE DA 43
+                                fileextension = ".clip";             //TYPE ID D6 BE DA 43
                                 break;
 
-                            case 0x6B20C4F3:    //ANIMATION MSK
-                                fileextension = ".animation";
+                            case 0x6B20C4F3:    //ANIMATION MSK         "ClipData"
+                                fileextension = ".clip";
                                 break;
 
                             case 0xE55D5715:
                                 fileextension = ".ltst";    //possibly lighting set?
                                 break;
 
-                            case 0x276CA4B9:         //TrueType font 
+                            case 0x89AF85AD:         //TrueType font MySims Kingdom
+                            case 0x276CA4B9:         //TrueType font MySims Agents
                                 fileextension = ".ttf";                      //TYPE ID 27 6C A4 B9
                                 break;
 
-                            case 0xD5988020:    //MSK PHYS
-                                fileextension = ".phys";
+                            case 0xD5988020:    //MSK HKX havok collision file
+                                fileextension = ".hkx";              // "PhysicsData" 
+                                break;
+
+                            case 0xD00DECF5:
+                                fileextension = ".objectGridVolumeData";   //MSK "ObjectGridVolumeData"
+                                break;
+
+                            case 0x8FC0DE5A:       //00 00 00 02           MSA ObjectGridVolumeData bounding box collision (for very simple objects)
+                                fileextension = ".objectGridVolumeData";
+                                break;
+
+                            case 0xB70F1CEA:     
+                                fileextension = ".snapPointData";   //MSK "SnapPointData"
+                                break;
+
+                            case 0x5027B4EC:       //00 00 00 03          MSA SnapPointData, most likely
+                                fileextension = ".snapPointData";
+                                break;
+
+                            case 0x614ED283:
+                                fileextension = ".voxelGridData";   //MSK "VoxelGridData"
+                                break;
+
+                            case 0x9614D3C0:       //00 00 00 01      MSA VoxelGridData, most likely, most likely
+                                fileextension = ".voxelGridData";
                                 break;
 
                             case 0x01661233:   //model          used by MySims, not the same as rmdl
@@ -510,8 +528,8 @@ namespace MorcuTool
                                 fileextension = ".levelXml";
                                 break;
 
-                            case 0x474999b4:    //uncompiled lua script
-                                fileextension = ".lua";
+                            case 0x474999b4:    //uncompiled lua script "LuaTextData"
+                                fileextension = ".lua";     
                                 break;
 
                             case 0x50182640:    //Light set XML MySims
@@ -519,7 +537,7 @@ namespace MorcuTool
                                 break;
 
                             case 0x50002128:    //Light set bin MySims
-                                fileextension = ".lightSetBin";
+                                fileextension = ".lightSetBin";                 //Named "LightSetData" in MSK's executable
                                 break;
 
                             case 0xdc37e964:   //xml
@@ -543,7 +561,7 @@ namespace MorcuTool
                                 break;
 
                             case 0xcf60795e:    //swm
-                                fileextension = ".swm";
+                                fileextension = ".swm";         //MSK           "SwarmData" 
                                 break;
 
                             case 0x9752e396:    //SwarmBin
@@ -562,8 +580,8 @@ namespace MorcuTool
                                 fileextension = ".CABBin";
                                 break;
 
-                            case 0x5bca8c06:    //big
-                                fileextension = ".big";
+                            case 0x5bca8c06:    //big   
+                                fileextension = ".big";         //"AptData" (but it is, of course, a familiar EA .BIG archive)
                                 break;
 
                             case 0xb61215e9:  //LightBoxXml
@@ -571,7 +589,7 @@ namespace MorcuTool
                                 break;
 
                             case 0xd6215201:  //LightBoxBin
-                                fileextension = ".lightBoxBin";
+                                fileextension = ".lightBoxBin";     //MSK LightBoxData (Named in MSK's executable, though I think I found it in MySims?)
                                 break;
 
                             case 0x1e1e6516:  //xmb
@@ -582,7 +600,7 @@ namespace MorcuTool
                                 Console.WriteLine("Unknown type ID " + subfiles[i].typeID);
                                 Console.WriteLine("and this type ID appears " + GetNumOccurrencesOfTypeID(subfiles[i].typeID) + " times in total.");
                                 Console.WriteLine("index of file was " + filesprocessed);
-                                fileextension = subfiles[i].typeID.ToString();
+                                fileextension = "."+subfiles[i].typeID.ToString();
                                 break;
                         }
 
@@ -605,6 +623,7 @@ namespace MorcuTool
 
                         ulong newfilenameasulong = utility.ReverseEndianULong(subfiles[i].hash);
 
+                        subfiles[i].hashString = "0x" + BitConverter.ToString(newfilenameasbytes).Replace("-", "");
 
                         if (global.activeVault.VaultHashesAndFileNames.Keys.Contains(subfiles[i].hash))
                         {
@@ -612,7 +631,7 @@ namespace MorcuTool
                         }
                         else
                         {
-                            subfiles[i].filename += BitConverter.ToString(newfilenameasbytes).Replace("-", "");
+                            subfiles[i].filename = subfiles[i].hashString;
                         }
 
                         subfiles[i].filename += fileextension;
@@ -1031,7 +1050,6 @@ namespace MorcuTool
 
     public class IndexEntry
     {
-
         public uint typeID = 0;
         public uint groupID = 0;
         public uint typeNumberOfInstances = 0;

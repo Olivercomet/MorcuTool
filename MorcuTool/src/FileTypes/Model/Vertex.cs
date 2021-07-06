@@ -6,15 +6,24 @@ using System.Threading.Tasks;
 
 namespace MorcuTool
 {
-    class Vertex
+    public class Vertex
     {
         uint startingVertexID;
 
         public float X;
         public float Y;
         public float Z;
+        public float W; //when needed
 
         public float U;
         public float V;
+
+        public Vertex() { 
+        }
+        public Vertex(float x, float y, float z) {
+            X = x;
+            Y = y;
+            Z = z;
+        }
     }
 }
