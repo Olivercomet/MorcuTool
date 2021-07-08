@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,19 @@ namespace MorcuTool
 {
     public static class imageTools
     {
+
+        public static Color ReadRGBA24(byte[] bytes, int pos) {
+
+            Color col = new Color();
+
+            int R = bytes[pos] & 0xFC;
+            int G = ((bytes[pos] & 0x03) << 6) | ((bytes[pos + 1] & 0xF0) >> 2);
+            int B = ((bytes[pos+1] & 0x0F) << 4) | ((bytes[pos + 2] & 0xC0) >> 6);
+            int A = bytes[pos+2] & 0x3F;
+
+            return col;
+        }
+
         public static List<byte> ConvertToTPL(string filename, byte[] file)
         {
             List<byte> output = new List<byte>();

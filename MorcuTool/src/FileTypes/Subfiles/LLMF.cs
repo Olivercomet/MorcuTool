@@ -120,7 +120,6 @@ namespace MorcuTool
             foreach (string s in report) {
                 Console.WriteLine(s);
             }
-
         }
     }
 }

@@ -13,6 +13,30 @@ namespace MorcuTool
         public ushort v3;
         public ushort v4;
 
+        public ushort vn1;
+        public ushort vn2;
+        public ushort vn3;
+        public ushort vn4;
+
+        public ushort vt1;
+        public ushort vt2;
+        public ushort vt3;
+        public ushort vt4;
+
+        public ushort vc1;
+        public ushort vc2;
+        public ushort vc3;
+        public ushort vc4;
+
+        public ushort v1BoneIndex;
+        public ushort v2BoneIndex;
+        public ushort v3BoneIndex;
+        public ushort v4BoneIndex;
+
+        public int temp; //hacky temporary variable for storing new pos after reading
+
+
+        public bool is_quad;
         public face() { 
         
         }

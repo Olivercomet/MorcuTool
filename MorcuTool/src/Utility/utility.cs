@@ -48,9 +48,24 @@ namespace MorcuTool
             return BitConverter.ToInt32(bytes, 0);
         }
 
+        public static ushort ReadUInt16BigEndian(byte[] input, int pos)
+        {
+            return (ushort)(input[pos + 1] + (input[pos] << 8));
+        }
+
         public static int ReadInt32BigEndian(byte[] input, int pos)
         {
             return (input[pos + 3]) + (input[pos + 2] <<8) + (input[pos + 1] <<16) + (input[pos] << 24);
+        }
+
+        public static uint ReadUInt32BigEndian(byte[] input, int pos)
+        {
+            return ((uint)input[pos + 3]) + ((uint)input[pos + 2] << 8) + ((uint)input[pos + 1] << 16) + ((uint)input[pos] << 24);
+        }
+
+        public static ulong ReadUInt64BigEndian(byte[] input, int pos)
+        {
+            return ((ulong)input[pos + 7]) + ((ulong)input[pos + 6] << 8) + ((ulong)input[pos + 5] << 16) + ((ulong)input[pos + 4] << 24) + ((ulong)input[pos + 3] << 32) + ((ulong)input[pos + 2] << 40) + ((ulong)input[pos + 1] << 48) + ((ulong)input[pos] << 56);
         }
 
         public static float ReadSingleBigEndian(byte[] input, int pos)
@@ -58,7 +73,6 @@ namespace MorcuTool
             byte[] bytes = new byte[] {input[pos+3],input[pos+2],input[pos+1],input[pos] };
             return BitConverter.ToSingle(bytes,0);
         }
-
 
         public static long ReverseEndianLong(long input)
         {

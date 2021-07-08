@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\FileTypes\Model\RevoModel.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\havokObject.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkArray.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkSimpleMeshShapeTriangle.cs" />

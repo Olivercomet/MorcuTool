@@ -34,6 +34,7 @@ namespace MorcuTool
         public hkxFile hkx; //if needed
         public MsaCollision msaCol; //if needed
         public LLMF llmf; //if needed
+        public RevoModel rmdl; //if needed
 
         public void Load()
         {
@@ -69,6 +70,11 @@ namespace MorcuTool
                         llmf = new LLMF(this);
                         llmf.GenerateReport();
                         break;
+                    case 0x2954E734:          //RMDL MSA     
+                    case 0xF9E50586:          //RMDL MSK   
+                        rmdl = new RevoModel(this);
+                        rmdl.GenerateObj();
+                        break;
                 }
             }
         }
@@ -77,39 +83,38 @@ namespace MorcuTool
             filebytes = new byte[0];
         }
 
+        public void ExportFile(bool silent, string silentPath)
+        {
 
-        public void ExportFile(bool silent, string silentPath) {
+            if (filebytes == null || filebytes.Length == 0)
+            {
+                Load();
+            }
 
-                if (filebytes == null || filebytes.Length == 0) {
-                    Load();
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            if (!silent)
+            {
+                saveFileDialog1.FileName = Path.GetFileName(filename);
+
+                saveFileDialog1.Title = "Export " + Path.GetFileName(filename);
+                saveFileDialog1.CheckPathExists = true;
+                saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    silentPath = saveFileDialog1.FileName;
                 }
+            }
 
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-                if (!silent)
-                { 
-                    saveFileDialog1.FileName = Path.GetFileName(filename);
-
-                    saveFileDialog1.Title = "Export " + Path.GetFileName(filename);
-                    saveFileDialog1.CheckPathExists = true;
-                    saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
-
-                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                    {
-                        silentPath = saveFileDialog1.FileName;
-                    }
+            if (silentPath != null && silentPath != "")
+            {
+                File.WriteAllBytes(silentPath, filebytes);
+                if (global.activePackage.date.Year > 1)
+                {
+                    File.SetLastWriteTime(silentPath, global.activePackage.date);
                 }
-
-                if (silentPath != null && silentPath != "") {
-                    File.WriteAllBytes(silentPath, filebytes);
-                    if (global.activePackage.date.Year > 1)
-                    {
-                        File.SetLastWriteTime(silentPath, global.activePackage.date);
-                    }
-                }                      
-          
-            
+            }
         }
-
     }
 }
