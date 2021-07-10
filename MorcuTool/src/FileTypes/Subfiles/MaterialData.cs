@@ -8,6 +8,8 @@ namespace MorcuTool
 {
     public class MaterialData
     {
+        public string filename;
+
         public List<Param> parameters = new List<Param>();
         public enum MaterialParameter : uint {
 
@@ -47,6 +49,8 @@ namespace MorcuTool
         public MaterialData(Subfile basis)
         {
             parameters = new List<Param>();
+            filename = basis.filename;
+
             int pos = 0x10;
 
             // a lot of the offsets are measured from 0x10

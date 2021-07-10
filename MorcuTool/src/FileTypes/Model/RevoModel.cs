@@ -12,6 +12,7 @@ namespace MorcuTool
         uint magic;
         uint flags;
         public List<Mesh> meshes = new List<Mesh>();
+        bool has_materials;
 
         public class Mesh {
 
@@ -258,6 +259,8 @@ namespace MorcuTool
                     do
                     {
                         Vertex newVertex = new Vertex();
+
+                        Console.WriteLine("Loading attribute "+vertexArrayType);
 
                         if (vertexArrayType == VertexAttributeArrayType.GX_VA_POS)
                         {
@@ -569,13 +572,18 @@ namespace MorcuTool
 
                 newMesh.materials = new List<MaterialData>();
 
+                if (newMesh.hash_of_material != 0) {
+                    has_materials = true;
+                }
+
                 foreach (Subfile s in global.activePackage.subfiles) {
 
                     if (s.hash == newMesh.hash_of_material && s.typeID == typeID_of_material) {
-
+                        
                         switch ((global.TypeID)s.typeID){
                             case global.TypeID.MATD_MSK:
                             case global.TypeID.MATD_MSA:
+                                
                                 if (s.filebytes == null || s.filebytes.Length == 0) {
                                     s.Load();
                                 }
@@ -607,12 +615,17 @@ namespace MorcuTool
         public void GenerateObj(string outputPath) {
 
             List<string> obj = new List<string>();
+            List<string> mtl = new List<string>();
 
             int cumuVertices = 0;
             int cumuNormals = 0;
             int cumuTexCoords = 0;
 
             string mtl_folder_path = Path.Combine(Path.GetDirectoryName(outputPath), Path.GetFileNameWithoutExtension(outputPath)) + "_materials";
+
+            if (has_materials) {
+                obj.Add("mtllib "+ Path.GetFileNameWithoutExtension(outputPath)+".mtl");
+            }
 
             foreach (Mesh m in meshes) {
 
@@ -625,6 +638,11 @@ namespace MorcuTool
                 for (int v = 0; v < m.normals.Count; v++)
                 {
                     obj.Add("vn " + m.normals[v].normalX + " " + m.normals[v].normalY + " " +m.normals[v].normalZ);
+                }
+
+                if (m.materials.Count > 0)
+                {
+                    obj.Add("usemtl " + Path.GetFileNameWithoutExtension(m.materials[0].filename));
                 }
 
                 for (int v = 0; v < m.texCoords.Count; v++)
@@ -658,15 +676,30 @@ namespace MorcuTool
                         Directory.CreateDirectory(mtl_folder_path);
                     }
 
+                    mtl.Add("");
+                    mtl.Add("newmtl "+Path.GetFileNameWithoutExtension(mat.filename));
+                    
                     foreach (MaterialData.Param param in mat.parameters) {
 
                         if (param.paramType == MaterialData.MaterialParameter.diffuseMap) {
-                            param.diffuse_texture.ExportFile(true, Path.Combine(mtl_folder_path,param.diffuse_texture.filename.Replace(".tpl",".png")));
+                            if (param.diffuse_texture != null)
+                            {
+                                param.diffuse_texture.ExportFile(true, Path.Combine(mtl_folder_path, param.diffuse_texture.filename.Replace(".tpl", ".png")));
+                                mtl.Add("map_kd " + Path.Combine(mtl_folder_path, param.diffuse_texture.filename.Replace(".tpl", ".png")));
+                            }
+                            else {
+                                Console.WriteLine("The diffuse texture of that mesh was not found in the package.");
+                                mtl.Add("map_kd material_not_found_in_package");
+                            }
+                                
                         }
                     }
                 }
             }
             File.WriteAllLines(outputPath,obj.ToArray());
+            if (has_materials) {
+                File.WriteAllLines(outputPath.Replace(".obj",".mtl"), mtl.ToArray());
+            }
         }
 
         public face AddAttrToFace(byte[] filebytes, int pos, VertexAttributeArrayType attr, face f, int vertIndex) {
@@ -692,13 +725,6 @@ namespace MorcuTool
                     }
                     break;
                 case VertexAttributeArrayType.GX_VA_TEX0:
-                case VertexAttributeArrayType.GX_VA_TEX1:
-                case VertexAttributeArrayType.GX_VA_TEX2:
-                case VertexAttributeArrayType.GX_VA_TEX3:
-                case VertexAttributeArrayType.GX_VA_TEX4:
-                case VertexAttributeArrayType.GX_VA_TEX5:
-                case VertexAttributeArrayType.GX_VA_TEX6:
-                case VertexAttributeArrayType.GX_VA_TEX7:
                     switch (vertIndex)
                     {        //I'm aware that this is an awful way to do it, but I don't want to go back and refactor the skyheroes code right now
                         case 0: f.vt1 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
@@ -706,6 +732,28 @@ namespace MorcuTool
                         case 2: f.vt3 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                         case 3: f.vt4 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX1:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX2:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX3:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX4:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX5:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX6:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
+                case VertexAttributeArrayType.GX_VA_TEX7:
+                    pos += 2;   //skip for now until multiple UVs are implemented
+                    break;
                     break;
                 case VertexAttributeArrayType.GX_VA_CLR0:
                 case VertexAttributeArrayType.GX_VA_CLR1:
