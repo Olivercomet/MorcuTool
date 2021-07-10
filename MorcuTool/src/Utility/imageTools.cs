@@ -20,7 +20,15 @@ namespace MorcuTool
 
             return Color.FromArgb(A, R, G, B);
         }
+        public static Color ReadNintendoRGBA32(byte[] bytes, int pos)
+        {
+            int A = bytes[pos];
+            int R = bytes[pos+1];
+            int G = bytes[pos+0x20];
+            int B = bytes[pos+0x21];
 
+            return Color.FromArgb(A, R, G, B);
+        }
         public static Color ToRGB565(ushort input)
         {
             int R = ((input >> 11) & 0x1f) << 3;
@@ -31,7 +39,7 @@ namespace MorcuTool
             return Color.FromArgb(A, R, G, B);
         }
 
-        public static List<byte> ConvertToTPL(string filename, byte[] file)
+        public static List<byte> ConvertToNintendoTPL(string filename, byte[] file)
         {
             List<byte> output = new List<byte>();
 

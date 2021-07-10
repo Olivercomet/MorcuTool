@@ -190,6 +190,7 @@ namespace MorcuTool
                         {
                             newSubfile.should_be_compressed_when_in_package = true;
                             newSubfile.uncompressedsize = utility.ReverseEndian(reader.ReadUInt32());
+                            Console.WriteLine("Found a compressed file");
                         }
 
                         instancesprocessedofcurrenttype++;
@@ -227,8 +228,10 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
-                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
+                            }
+                            else {
+                                newSubfile.should_be_compressed_when_in_package = true;
                             }
 
                             subfiles.Add(newSubfile);
@@ -249,7 +252,6 @@ namespace MorcuTool
                         {
                             Subfile newSubfile = new Subfile();
 
-                           
                             newSubfile.typeID = reader.ReadUInt32();
                             newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
                             newSubfile.hash |= (ulong)(reader.ReadUInt32());
@@ -261,8 +263,11 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
-                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
+                            }
+                            else
+                            {
+                                newSubfile.should_be_compressed_when_in_package = true;
                             }
 
                             subfiles.Add(newSubfile);
@@ -289,8 +294,11 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
-                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
+                            }
+                            else
+                            {
+                                newSubfile.should_be_compressed_when_in_package = true;
                             }
 
                             subfiles.Add(newSubfile);
@@ -315,14 +323,46 @@ namespace MorcuTool
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
-                                newSubfile.should_be_compressed_when_in_package = true;
                                 newSubfile.uncompressedsize = 0;
+                            }
+                            else
+                            {
+                                newSubfile.should_be_compressed_when_in_package = true;
                             }
 
                             subfiles.Add(newSubfile);
                         }
                     }
-                    else
+                    else if (MSKindexversion == 7)
+                        {
+                            Console.WriteLine("index version 7");
+                            for (uint i = 0; i < filecount; i++)
+                            {
+                                Subfile newSubfile = new Subfile();
+
+                                newSubfile.typeID = reader.ReadUInt32();
+                                newSubfile.groupID = reader.ReadUInt32();
+                                newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
+                                newSubfile.hash |= (ulong)(reader.ReadUInt32());
+
+                                newSubfile.fileoffset = reader.ReadUInt32();
+                                newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
+                                newSubfile.uncompressedsize = reader.ReadUInt32();
+                                reader.BaseStream.Position += 0x04; //flags
+
+                            if (newSubfile.filesize == newSubfile.uncompressedsize)
+                            {
+                                newSubfile.uncompressedsize = 0;
+                            }
+                            else
+                            {
+                                newSubfile.should_be_compressed_when_in_package = true;
+                            }
+
+                            subfiles.Add(newSubfile);
+                            }
+                        }
+                        else
                         {
                         MessageBox.Show("Unknown index version: "+ MSKindexversion);
                         return;
@@ -348,7 +388,6 @@ namespace MorcuTool
                         {
                         subfiles[i].has_been_decompressed = false;    //set default state of a compressed file to compressed
                         }
-
 
                     {
                         string fileextension = null;
@@ -791,7 +830,7 @@ namespace MorcuTool
                         switch (filetype[0])
                         {
                             case 0x22:
-                                newfile = imageTools.ConvertToTPL(filename + ID.ToString(), newfile.ToArray());
+                                newfile = imageTools.ConvertToNintendoTPL(filename + ID.ToString(), newfile.ToArray());
                                 File.WriteAllBytes(filename + ID.ToString() + ".tpl", newfile.ToArray());
                                 break;
                             case 0x28:
@@ -1047,10 +1086,11 @@ namespace MorcuTool
                     utility.AddULongToList(output, utility.ReverseEndianULong(subfiles[i].hash));
                     utility.AddIntToList(output, utility.ReverseEndianSigned(subfileOffsets[i]));
                     utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].filesize));
-                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].typeID));
-                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].groupID));
 
-                    if(TypeIDsThatRequireCompression.Contains(subfiles[i].typeID))
+                    // this line is probably only required in MSK     utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].typeID));
+                    // this line is probably only required in MSK     utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].groupID));
+
+                    if (TypeIDsThatRequireCompression.Contains(subfiles[i].typeID))
                         {
                         utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].uncompressedsize));
                         }

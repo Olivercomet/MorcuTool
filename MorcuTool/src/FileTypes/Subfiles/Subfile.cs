@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using UnluacNET;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -94,7 +95,6 @@ namespace MorcuTool
 
         public void ExportFile(bool silent, string silentPath)
         {
-
             if (filebytes == null || filebytes.Length == 0)
             {
                 Load();
@@ -119,6 +119,11 @@ namespace MorcuTool
                     saveFileDialog1.Filter = "PNG image (*.PNG)|*.png|TPL image (*.tpl)|*.tpl";
                     saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".tpl", ".png");
                 }
+                else if (typeID == (uint)global.TypeID.LUAC_MSK || typeID == (uint)global.TypeID.LUAC_MSA)
+                {
+                    saveFileDialog1.Filter = "Decompiled lua script (*.lua)|*.lua|Compiled lua script (*.luac)|*.luac";
+                    saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".luac", ".lua");
+                }
                 else
                 {
                     saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
@@ -133,6 +138,14 @@ namespace MorcuTool
                 if (tpl != null)
                 {
                     silentPath = silentPath.Replace(".tpl", ".png");
+                }
+                else if (typeID == (uint)global.TypeID.LUAC_MSK || typeID == (uint)global.TypeID.LUAC_MSA)
+                {
+                    //these MSK hashes are some of the ones that crash the decompiler
+                    if (hash != 0x13A985F3E3E05FD1 && hash != 0x1DCDDD2C8D672B03 && hash != 0x225C6F76F6DFE215 || hash != 0x2B19149AE76336EA || hash != 0x13A985F3E3E05FD1)
+                    {
+                        silentPath = silentPath.Replace(".luac", ".lua");
+                    }
                 }
             }
 
@@ -154,9 +167,13 @@ namespace MorcuTool
                         tpl.images[0].Save(silentPath);
                     }
                 }
-                else if (tpl != null && !tpl.has_been_converted_to_nintendo_format) {
-                    filebytes = imageTools.ConvertToTPL(filename, filebytes).ToArray();
-                    tpl.has_been_converted_to_nintendo_format = true;
+                else if (tpl != null) {
+                    File.WriteAllBytes(silentPath, imageTools.ConvertToNintendoTPL(filename, filebytes).ToArray());
+                }
+                else if ((typeID == (uint)global.TypeID.LUAC_MSK || typeID == (uint)global.TypeID.LUAC_MSA) && Path.GetExtension(silentPath) == ".lua")
+                {
+                    Console.WriteLine("Trying to decompile " + filename);
+                    DecompileLuc(filebytes, silentPath);
                 }
                 else
                 {
@@ -168,6 +185,27 @@ namespace MorcuTool
                     File.SetLastWriteTime(silentPath, global.activePackage.date);
                 }
             }
+        }
+
+        public string DecompileLuc(byte[] input, string destfile)
+        {
+            Stream stream = new MemoryStream(input);
+
+            var header = new BHeader(stream);
+
+            LFunction lmain = header.Function.Parse(stream, header);
+
+            Decompiler d = new Decompiler(lmain);
+            d.Decompile();
+
+            using (var writer = new StreamWriter(destfile, false, new UTF8Encoding(false)))
+            {
+                d.Print(new Output(writer));
+
+                writer.Flush();
+            }
+
+            return (null);
         }
     }
 }

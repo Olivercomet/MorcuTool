@@ -382,7 +382,7 @@ namespace MorcuTool
             {
                 foreach (string filename in openFileDialog1.FileNames)
                 {
-                    File.WriteAllBytes(filename + "new.tpl", imageTools.ConvertToTPL(filename, File.ReadAllBytes(filename)).ToArray());
+                    File.WriteAllBytes(filename + "new.tpl", imageTools.ConvertToNintendoTPL(filename, File.ReadAllBytes(filename)).ToArray());
                 }
             }
 

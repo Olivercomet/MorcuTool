@@ -754,7 +754,6 @@ namespace MorcuTool
                 case VertexAttributeArrayType.GX_VA_TEX7:
                     pos += 2;   //skip for now until multiple UVs are implemented
                     break;
-                    break;
                 case VertexAttributeArrayType.GX_VA_CLR0:
                 case VertexAttributeArrayType.GX_VA_CLR1:
                     switch (vertIndex)
