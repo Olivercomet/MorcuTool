@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace MorcuTool
     {
         uint magic;
         uint flags;
-        List<Mesh> meshes = new List<Mesh>();
+        public List<Mesh> meshes = new List<Mesh>();
 
         public class Mesh {
 
@@ -18,6 +19,10 @@ namespace MorcuTool
             public List<Vertex> normals = new List<Vertex>();
             public List<Vertex> texCoords = new List<Vertex>();
             public List<face> faces = new List<face>();
+
+            public List<MaterialData> materials = new List<MaterialData>();
+
+            public ulong hash_of_material = 0;
 
             public List<VertexAttributeArrayType> presentAttributes = new List<VertexAttributeArrayType>();
         }
@@ -133,8 +138,8 @@ namespace MorcuTool
                 int numVertAttributes = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
                 int vertDataOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
-                ulong hash_of_MTST = utility.ReadUInt64BigEndian(basis.filebytes, pos); pos += 8;
-                uint unk = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                newMesh.hash_of_material = utility.ReadUInt64BigEndian(basis.filebytes, pos); pos += 8;
+                uint typeID_of_material = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
                 uint unk2 = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                 float boundsMinX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
@@ -340,7 +345,7 @@ namespace MorcuTool
                                     else if (vertexComponentSize == VertexAttributeComponentSize.GX_U8)
                                     {
                                         checkAheadAmount = 8;  //APPARENTLY IT IGNORES THE U8 AND READS FLOATS INSTEAD.
-                                        newVertex.U = 1 - utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.U = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                         newVertex.V = 1 - utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else
@@ -560,17 +565,54 @@ namespace MorcuTool
                     }
                 }
 
+                //now get the materials ready
+
+                newMesh.materials = new List<MaterialData>();
+
+                foreach (Subfile s in global.activePackage.subfiles) {
+
+                    if (s.hash == newMesh.hash_of_material && s.typeID == typeID_of_material) {
+
+                        switch ((global.TypeID)s.typeID){
+                            case global.TypeID.MATD_MSK:
+                            case global.TypeID.MATD_MSA:
+                                if (s.filebytes == null || s.filebytes.Length == 0) {
+                                    s.Load();
+                                }
+                                newMesh.materials.Add(s.matd);
+                                break;
+                            case global.TypeID.MTST_MSK:
+                            case global.TypeID.MTST_MSA:
+                                if (s.filebytes == null || s.filebytes.Length == 0){
+                                    s.Load();
+                                }
+
+                                foreach (MaterialData mat in s.mtst.mats) {
+                                    newMesh.materials.Add(mat);
+                                }
+
+                                break;
+                            default:
+                                System.Windows.Forms.MessageBox.Show("RMDL tried to use a material of unexpected type ID: "+ (global.TypeID)s.typeID);
+                                break;
+                        }
+                        break;
+                    }
+                }
+
                 meshes.Add(newMesh);
             }
         }
 
-        public void GenerateObj() {
+        public void GenerateObj(string outputPath) {
 
             List<string> obj = new List<string>();
 
             int cumuVertices = 0;
             int cumuNormals = 0;
             int cumuTexCoords = 0;
+
+            string mtl_folder_path = Path.Combine(Path.GetDirectoryName(outputPath), Path.GetFileNameWithoutExtension(outputPath)) + "_materials";
 
             foreach (Mesh m in meshes) {
 
@@ -609,12 +651,25 @@ namespace MorcuTool
                 cumuVertices += m.vertices.Count;
                 cumuNormals += m.normals.Count;
                 cumuTexCoords += m.texCoords.Count;
+
+                foreach (MaterialData mat in m.materials) {
+
+                    if (!Directory.Exists(mtl_folder_path)) {
+                        Directory.CreateDirectory(mtl_folder_path);
+                    }
+
+                    foreach (MaterialData.Param param in mat.parameters) {
+
+                        if (param.paramType == MaterialData.MaterialParameter.diffuseMap) {
+                            param.diffuse_texture.ExportFile(true, Path.Combine(mtl_folder_path,param.diffuse_texture.filename.Replace(".tpl",".png")));
+                        }
+                    }
+                }
             }
-            System.IO.File.WriteAllLines("RMDLoutput.obj",obj.ToArray());
+            File.WriteAllLines(outputPath,obj.ToArray());
         }
 
         public face AddAttrToFace(byte[] filebytes, int pos, VertexAttributeArrayType attr, face f, int vertIndex) {
-
 
             switch (attr) {
 

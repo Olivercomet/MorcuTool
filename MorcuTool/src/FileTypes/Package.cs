@@ -73,7 +73,7 @@ namespace MorcuTool
             int currenttypeindexbeingprocessed = 0;
             int instancesprocessedofcurrenttype = 0;
 
-            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
+            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)))
             {
                 uint magic = 0;
 
@@ -217,7 +217,9 @@ namespace MorcuTool
 
                             newSubfile.typeID = reader.ReadUInt32();
                             newSubfile.groupID = reader.ReadUInt32();
-                            newSubfile.hash = reader.ReadUInt64();
+                            newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
+                            newSubfile.hash |= (ulong)(reader.ReadUInt32());
+
                             newSubfile.fileoffset = reader.ReadUInt32();
                             newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
                             newSubfile.uncompressedsize = reader.ReadUInt32();
@@ -249,7 +251,9 @@ namespace MorcuTool
 
                            
                             newSubfile.typeID = reader.ReadUInt32();
-                            newSubfile.hash = reader.ReadUInt64();   //or might be hash
+                            newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
+                            newSubfile.hash |= (ulong)(reader.ReadUInt32());
+
                             newSubfile.fileoffset = reader.ReadUInt32();
                             newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
                             newSubfile.uncompressedsize = reader.ReadUInt32();
@@ -275,7 +279,9 @@ namespace MorcuTool
                             Subfile newSubfile = new Subfile();
 
                             newSubfile.typeID = allFilesTypeID;
-                            newSubfile.hash = reader.ReadUInt64();   //or might be hash
+                            newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
+                            newSubfile.hash |= (ulong)(reader.ReadUInt32());
+
                             newSubfile.fileoffset = reader.ReadUInt32();
                             newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
                             newSubfile.uncompressedsize = reader.ReadUInt32();
@@ -300,7 +306,9 @@ namespace MorcuTool
                             Subfile newSubfile = new Subfile();
 
                             newSubfile.typeID = reader.ReadUInt32();
-                            newSubfile.hash = reader.ReadUInt64();
+                            newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
+                            newSubfile.hash |= (ulong)(reader.ReadUInt32());
+
                             newSubfile.fileoffset = reader.ReadUInt32();
                             newSubfile.filesize = reader.ReadUInt32();
                             newSubfile.uncompressedsize = reader.ReadUInt32();
@@ -345,254 +353,254 @@ namespace MorcuTool
                     {
                         string fileextension = null;
 
-                        switch (subfiles[i].typeID)
+                        switch ((global.TypeID)subfiles[i].typeID)
                         {
-                            case 0x2954E734:          //RMDL MSA     
+                            case global.TypeID.RMDL_MSA:          //RMDL MSA     
                                 fileextension = ".rmdl";        //TYPE ID 29 54 E7 34
                                 break;
 
-                            case 0xF9E50586:          //RMDL MSK     
+                            case global.TypeID.RMDL_MSK:          //RMDL MSK     
                                 fileextension = ".rmdl";        //          "ModelData"
                                 break;
 
-                            case 0xE6640542:          //MATD MSA    
+                            case global.TypeID.MATD_MSA:          //MATD MSA    
                                 fileextension = ".matd";        //TYPE ID E6 64 05 42
                                 break;
 
-                            case 0x01D0E75D:          //MATD MSK            "MaterialData"
+                            case global.TypeID.MATD_MSK:          //MATD MSK            "MaterialData"
                                 fileextension = ".matd";
                                 break;
 
-                            case 0x92AA4D6A:         //altered TPL MSA
+                            case global.TypeID.TPL_MSA:         //altered TPL MSA
                                 fileextension = ".tpl";         //TYPE ID 92 AA 4D 6A
                                 break;
 
-                            case 0x00B2D882:         //altered TPL MSK      "TextureData"
+                            case global.TypeID.TPL_MSK:         //altered TPL MSK      "TextureData"
                                 fileextension = ".tpl";
                                 break;
 
-                            case 0x02019972:      //MTST Material Set MSK       "MaterialSetData"
+                            case global.TypeID.MTST_MSK:      //MTST Material Set MSK       "MaterialSetData"
                                 fileextension = ".mtst";
                                 break;
 
-                            case 0x787E842A:         //MTST Material Set MSA
+                            case global.TypeID.MTST_MSA:         //MTST Material Set MSA
                                 fileextension = ".mtst";         //TYPE ID 78 7E 84 2A
                                 break;
 
-                            case 0x8101A6EA:         //FPST   MySims Kingdom footprint set.    "FootprintData"    contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
-                            case 0x0EFC1A82:         //FPST   MySims Agents footprint set.                        contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
+                            case global.TypeID.FPST_MSK:         //FPST   MySims Kingdom footprint set.    "FootprintData"    contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
+                            case global.TypeID.FPST_MSA:         //FPST   MySims Agents footprint set.                        contains a model footprint (ftpt) which is possibly documented at http://simswiki.info/wiki.php?title=Sims_3:PackedFileTypes
                                 fileextension = ".fpst";        //It's like a heatmap of where sims can walk? Or perhaps which surfaces should generate which kind of footprint (but wouldn't that mean that overhangs wouldn't work?)
                                 break;
 
-                            case 0x2199BB60:        //BNKb    big endian BNK    MSA                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
+                            case global.TypeID.BNK_MSA:        //BNKb    big endian BNK    MSA                             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
                                 fileextension = ".bnk";        //TYPE ID 21 99 BB 60
                                 break;
 
-                            case 0xB6B5C271:        //BNKb    BNK    MSK (idk which endian, not tested)       "AudioData"             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
+                            case global.TypeID.BNK_MSK:        //BNKb    BNK    MSK (idk which endian, not tested)       "AudioData"             vgmstream can decode these.           https://github.com/losnoco/vgmstream/blob/master/src/meta/ea_schl.c  
                                 fileextension = ".bnk";                                         
                                 break;
 
-                            case 0x2699C28D:        //BIGF
+                            case global.TypeID.BIG_MSK:    //big   
+                                fileextension = ".big";         //"AptData" (but it is, of course, a familiar EA .BIG archive)
+                                break;
+
+                            case global.TypeID.BIG_MSA:        //BIGF
                                 fileextension = ".big";
                                 break;
 
-                            case 0x1A8FEB14:       //00 00 00 02             There's another, separate filetype that also begins with the 2 magic, but that one doesn't appear as frequently, so this one here is probably the collision type ID
+                            case global.TypeID.COLLISION_MSA:       //00 00 00 02             There's another, separate filetype that also begins with the 2 magic, but that one doesn't appear as frequently, so this one here is probably the collision type ID
                                                    //TYPE ID 1A 8F EB 14.  
                                 fileextension = ".collision";               //mesh collision
                                 break;                                  //there are mentions of 'rwphysics' in MSA's main.dol; could this mean Renderware Physics, which was indeed a product available at the time?
 
-                            case 0x6B772503:       //FX
+                            case global.TypeID.FX:       //FX
                                 fileextension = ".fx";
                                 break;
 
-                            case 0x3681D75B:        //LUA MSA
+                            case global.TypeID.LUAC_MSA:        //LUAC MSA
                                 fileextension = ".luac";
                                 containslua = true;
                                 break;
 
-                            case 0x2B8E2411:         //LUA MSK  "LuaObjectData"
+                            case global.TypeID.LUAC_MSK:         //LUAC MSK  "LuaObjectData"
                                 fileextension = ".luac";
                                 containslua = true;
                                 break;
 
-                            case 0x2EF1E401:     //SLOT MSA
+                            case global.TypeID.SLOT_MSA:     //SLOT MSA
                                 fileextension = ".slot";
                                 break;
 
-                            case 0x487BF9E4:     //SLOT MSK
+                            case global.TypeID.SLOT_MSK:     //SLOT MSK
                                 fileextension = ".slot";                //"SlotData"
                                 break;
 
-                            case 0x28707864:       //particles file
+                            case global.TypeID.PARTICLES_MSA:       //particles file
                                 fileextension = ".particles";           //TYPE ID 28 70 78 64
                                 break;
 
-                            case 0x41C4A8EF:       //00 00 00 03        buildable region MSA
+                            case global.TypeID.BUILDABLEREGION_MSA:       //00 00 00 03        buildable region MSA
                                 fileextension = ".buildableregion";
                                 break;
 
-                            case 0xC84ACD30:       //buildable region MSK        "BuildableRegionData"
+                            case global.TypeID.BUILDABLEREGION_MSK:       //buildable region MSK        "BuildableRegionData"
                                 fileextension = ".buildableregion";        
                                 break;
 
-                            case 0xA5DCD485:                     //LLMF level bin MSA
+                            case global.TypeID.LLMF_MSA:                     //LLMF level bin MSA
                                 fileextension = ".llmf";
                                 break;
 
-                            case 0x58969018:                     //LLMF level bin MSK   "LevelData"
+                            case global.TypeID.LLMF_MSK:                     //LLMF level bin MSK   "LevelData"
                                 fileextension = ".llmf";
                                 break;
 
-                            case 0x4672E5BD:    //RIG MSA                   //Interesting granny struct info at 0x49CFDD in MSA's main.dol
+                            case global.TypeID.RIG_MSA:    //RIG MSA                   //Interesting granny struct info at 0x49CFDD in MSA's main.dol
                                 fileextension = ".grannyrig";             //TYPE ID 46 72 E5 BD
                                 break;
 
-                            case 0x8EAF13DE:    //RIG MSK
+                            case global.TypeID.RIG_MSK:    //RIG MSK
                                 fileextension = ".grannyrig";           // "RigData"
                                 break;
 
-                            case 0xD6BEDA43:    //ANIMATION MSA
+                            case global.TypeID.ANIMCLIP_MSA:    //ANIMATION MSA
                                 fileextension = ".clip";             //TYPE ID D6 BE DA 43
                                 break;
 
-                            case 0x6B20C4F3:    //ANIMATION MSK         "ClipData"
+                            case global.TypeID.ANIMCLIP_MSK:    //ANIMATION MSK         "ClipData"
                                 fileextension = ".clip";
                                 break;
 
-                            case 0xE55D5715:
+                            case global.TypeID.LTST_MSA:
                                 fileextension = ".ltst";    //possibly lighting set?
                                 break;
 
-                            case 0x89AF85AD:         //TrueType font MySims Kingdom
-                            case 0x276CA4B9:         //TrueType font MySims Agents
+                            case global.TypeID.TTF_MSK:         //TrueType font MySims Kingdom
+                            case global.TypeID.TTF_MSA:         //TrueType font MySims Agents
                                 fileextension = ".ttf";                      //TYPE ID 27 6C A4 B9
                                 break;
 
-                            case 0xD5988020:    //MSK HKX havok collision file
+                            case global.TypeID.HKX_MSK:    //MSK HKX havok collision file
                                 fileextension = ".hkx";              // "PhysicsData" 
                                 break;
 
-                            case 0xD00DECF5:
+                            case global.TypeID.OGVD_MSK:
                                 fileextension = ".objectGridVolumeData";   //MSK "ObjectGridVolumeData"
                                 break;
 
-                            case 0x8FC0DE5A:       //00 00 00 02           MSA ObjectGridVolumeData bounding box collision (for very simple objects)
+                            case global.TypeID.OGVD_MSA:       //00 00 00 02           MSA ObjectGridVolumeData bounding box collision (for very simple objects)
                                 fileextension = ".objectGridVolumeData";
                                 break;
 
-                            case 0xB70F1CEA:     
+                            case global.TypeID.SPD_MSK:     
                                 fileextension = ".snapPointData";   //MSK "SnapPointData"
                                 break;
 
-                            case 0x5027B4EC:       //00 00 00 03          MSA SnapPointData, most likely
+                            case global.TypeID.SPD_MSA:       //00 00 00 03          MSA SnapPointData, most likely
                                 fileextension = ".snapPointData";
                                 break;
 
-                            case 0x614ED283:
+                            case global.TypeID.VGD_MSK:
                                 fileextension = ".voxelGridData";   //MSK "VoxelGridData"
                                 break;
 
-                            case 0x9614D3C0:       //00 00 00 01      MSA VoxelGridData, most likely, most likely
+                            case global.TypeID.VGD_MSA:       //00 00 00 01      MSA VoxelGridData, most likely, most likely
                                 fileextension = ".voxelGridData";
                                 break;
 
-                            case 0x01661233:   //model          used by MySims, not the same as rmdl
+                            case global.TypeID.MODEL_MS:   //model          used by MySims, not the same as rmdl
                                 fileextension = ".model";
                                 break;
 
-                            case 0x0166038c:
+                            case global.TypeID.KEYNAMEMAP_MS:
                                 fileextension = ".KeyNameMap";
                                 break;
 
-                            case 0x015A1849:
+                            case global.TypeID.GEOMETRY_MS:
                                 fileextension = ".geometry";
                                 break;
 
-                            case 0x00b552ea:
+                            case global.TypeID.OLDSPEEDTREE_MS:
                                 fileextension = ".oldSpeedTree";
                                 break;
 
-                            case 0x021d7e8c:
+                            case global.TypeID.SPEEDTREE_MS:
                                 fileextension = ".speedTree";
                                 break;
 
-                            case 0x8e342417:
+                            case global.TypeID.COMPOSITETEXTURE_MS:
                                 fileextension = ".compositeTexture";
                                 break;
 
-                            case 0x025ed6f4:
+                            case global.TypeID.SIMOUTFIT_MS:
                                 fileextension = ".simOutfit";
                                 break;
 
-                            case 0x585ee310:
+                            case global.TypeID.LEVELXML_MS:
                                 fileextension = ".levelXml";
                                 break;
 
-                            case 0x474999b4:    //uncompiled lua script "LuaTextData"
+                            case global.TypeID.LUA_MSK:    //uncompiled lua script "LuaTextData"
                                 fileextension = ".lua";     
                                 break;
 
-                            case 0x50182640:    //Light set XML MySims
+                            case global.TypeID.LIGHTSETXML_MS:    //Light set XML MySims
                                 fileextension = ".lightSetXml";
                                 break;
 
-                            case 0x50002128:    //Light set bin MySims
+                            case global.TypeID.LIGHTSETBIN_MSK:    //Light set bin MySims
                                 fileextension = ".lightSetBin";                 //Named "LightSetData" in MSK's executable
                                 break;
 
-                            case 0xdc37e964:   //xml
+                            case global.TypeID.XML_MS:   //xml
                                 fileextension = ".xml";
                                 break;
 
-                            case 0x2c81b60a:    //footprint set MySims
+                            case global.TypeID.FPST_MS:    //footprint set MySims
                                 fileextension = ".footprintSet";
                                 break;
 
-                            case 0xc876c85e:    //object construction xml
+                            case global.TypeID.OBJECTCONSTRUCTIONXML_MS:    //object construction xml
                                 fileextension = ".objectConstructionXml";
                                 break;
 
-                            case 0xc08ec0ee:    //object construction bin
+                            case global.TypeID.OBJECTCONSTRUCTIONBIN_MS:    //object construction bin
                                 fileextension = ".objectConstructionBin";
                                 break;
 
-                            case 0x4045d294:    //slot xml
+                            case global.TypeID.SLOTXML_MS:    //slot xml
                                 fileextension = ".slotXml";
                                 break;
 
-                            case 0xcf60795e:    //swm
+                            case global.TypeID.SWARM_MSK:    //swm
                                 fileextension = ".swm";         //MSK           "SwarmData" 
                                 break;
 
-                            case 0x9752e396:    //SwarmBin
+                            case global.TypeID.SWARM_MS:    //SwarmBin
                                 fileextension = ".SwarmBin";
                                 break;
 
-                            case 0xe0d83029:    //XmlBin
+                            case global.TypeID.XMLBIN_MS:    //XmlBin
                                 fileextension = ".XmlBin";
                                 break;
 
-                            case 0xa6856948:    //CABXml
+                            case global.TypeID.CABXML_MS:    //CABXml
                                 fileextension = ".CABXml";
                                 break;
 
-                            case 0xc644f440:    //CABBin
+                            case global.TypeID.CABBIN_MS:    //CABBin
                                 fileextension = ".CABBin";
                                 break;
 
-                            case 0x5bca8c06:    //big   
-                                fileextension = ".big";         //"AptData" (but it is, of course, a familiar EA .BIG archive)
-                                break;
-
-                            case 0xb61215e9:  //LightBoxXml
+                            case global.TypeID.LIGHTBOXXML_MS:  //LightBoxXml
                                 fileextension = ".lightBoxXml";
                                 break;
 
-                            case 0xd6215201:  //LightBoxBin
+                            case global.TypeID.LIGHTBOXBIN_MS:  //LightBoxBin
                                 fileextension = ".lightBoxBin";     //MSK LightBoxData (Named in MSK's executable, though I think I found it in MySims?)
                                 break;
 
-                            case 0x1e1e6516:  //xmb
+                            case global.TypeID.XMB_MS:  //xmb
                                 fileextension = ".xmb";
                                 break;
 
@@ -825,6 +833,21 @@ namespace MorcuTool
         }
 
 
+        public Subfile FindFileByHashAndTypeID(ulong hash, uint typeID) {
+
+            foreach (Subfile s in global.activePackage.subfiles)
+            {
+                if (s.hash == hash && s.typeID == typeID){
+                    return s;
+                }
+            }
+
+            Console.WriteLine("File with hash " + hash + " and type ID " + typeID + " not found...");
+            return null;
+        }
+
+
+
         public uint ReverseEndianIfNeeded(uint input) { 
         if (packageType == PackageType.Agents)
             {
@@ -836,7 +859,6 @@ namespace MorcuTool
 
         public void RebuildPackage()
         {
-
             List<byte> output = new List<byte>();
 
             uint packageVersion = 0;
@@ -1046,6 +1068,14 @@ namespace MorcuTool
 
             File.WriteAllBytes("test.package", output.ToArray());
         }
+
+
+
+
+
+
+
+
     }
 
     public class IndexEntry

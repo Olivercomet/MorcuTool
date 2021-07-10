@@ -13,14 +13,22 @@ namespace MorcuTool
 
         public static Color ReadRGBA24(byte[] bytes, int pos) {
 
-            Color col = new Color();
-
             int R = bytes[pos] & 0xFC;
             int G = ((bytes[pos] & 0x03) << 6) | ((bytes[pos + 1] & 0xF0) >> 2);
             int B = ((bytes[pos+1] & 0x0F) << 4) | ((bytes[pos + 2] & 0xC0) >> 6);
             int A = bytes[pos+2] & 0x3F;
 
-            return col;
+            return Color.FromArgb(A, R, G, B);
+        }
+
+        public static Color ToRGB565(ushort input)
+        {
+            int R = ((input >> 11) & 0x1f) << 3;
+            int G = ((input >> 5) & 0x3F) << 2;
+            int B = (input & 0x1F) << 3;
+            int A = 255;
+
+            return Color.FromArgb(A, R, G, B);
         }
 
         public static List<byte> ConvertToTPL(string filename, byte[] file)

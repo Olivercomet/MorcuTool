@@ -35,9 +35,15 @@ namespace MorcuTool
                 {
                     subfileContextMenu.Show(Cursor.Position);
                 }
-                else if (FileTree.SelectedNode == FileTree.Nodes[0]) {
+                else if (FileTree.SelectedNode == FileTree.Nodes[0])
+                {
                     packageRootContextMenu.Show(Cursor.Position);
                 }
+            }
+
+            if (treeNodesAndSubfiles.Keys.Contains(FileTree.SelectedNode))
+            {
+                hashLabel.Text = "Hash: " + treeNodesAndSubfiles[FileTree.SelectedNode].hashString;
             }
         }
 
@@ -366,12 +372,7 @@ namespace MorcuTool
             openFileDialog1.Title = "Select MySims Series TPL";
             openFileDialog1.DefaultExt = "tpl";
 
-            openFileDialog1.Filter = "MySims Series TPL file (*.tpl)|*.tpl";
-
-            if (isMSK.Checked)
-            {
-                openFileDialog1.Filter = "S3PE fake DDS file (*.dds)|*.dds";
-            }
+            openFileDialog1.Filter = "MySims Series TPL file or fake DDS file (*.tpl, *.dds)|*.tpl;*.dds";
 
             openFileDialog1.CheckFileExists = true;
             openFileDialog1.CheckPathExists = true;
@@ -508,8 +509,18 @@ namespace MorcuTool
                             Subfile s = new Subfile();
                             s.filebytes = File.ReadAllBytes(filename);
                             s.rmdl = new RevoModel(s);
-                            s.rmdl.GenerateObj();
-                            MessageBox.Show("Generated OBJ in MorcuTool directory");
+
+                            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                            saveFileDialog1.Title = "Save model";
+                            saveFileDialog1.FileName = "";
+                            saveFileDialog1.CheckPathExists = true;
+                            saveFileDialog1.Filter = "Wavefront OBJ (*.obj)|*.obj";
+
+                            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                                {
+                                s.rmdl.GenerateObj(saveFileDialog1.FileName);
+                                }
                         }
                         
                     }
@@ -684,12 +695,15 @@ namespace MorcuTool
 
         private void findByHashButton_Click(object sender, EventArgs e)
         {
-            List<String> found = new List<string>();
+            List<string> found = new List<string>();
+            List<Subfile> actualsubfiles = new List<Subfile>();
+
             found.Add("Found the following files with similar hashes:");
 
             foreach (Subfile s in global.activePackage.subfiles) {
                 if (s.hashString.Contains(findByHashTextBox.Text)) {
                     found.Add(s.filename);
+                    actualsubfiles.Add(s);
                 }
             }
 
@@ -700,7 +714,16 @@ namespace MorcuTool
                     message += s + "\n";
                 }
 
-                MessageBox.Show(message);
+                MessageBox.Show(message + "\n\nTaking you to the first result.");
+
+                    foreach (TreeNode node in FileTree.Nodes[0].Nodes) {
+
+                        if (treeNodesAndSubfiles[node] == actualsubfiles[0]) {
+                            FileTree.SelectedNode = node;
+                            FileTree.SelectedNode.EnsureVisible();
+                            break;
+                        }
+                    }
 
                 return;
             }
@@ -723,6 +746,128 @@ namespace MorcuTool
                     break;
                     }
             }
+        }
+
+        private void hashLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void backtrackToModel_Click(object sender, EventArgs e)
+        {
+            Subfile s = treeNodesAndSubfiles[FileTree.SelectedNode];
+            s.Load();
+            backtrackSubfile(s);
+        }
+
+        public void backtrackSubfile(Subfile s) {
+
+            Console.WriteLine("Backtracking " + s.filename);
+
+            switch ((global.TypeID)s.typeID)
+            {
+                case global.TypeID.TPL_MSK:
+                case global.TypeID.TPL_MSA:
+                    foreach (Subfile superior in global.activePackage.subfiles)
+                    {
+                        //look for MATDs that reference this texture
+
+                            if ((global.TypeID)superior.typeID == global.TypeID.MATD_MSK || (global.TypeID)superior.typeID == global.TypeID.MATD_MSA)
+                            {
+                            superior.Load();
+                            foreach (MaterialData.Param param in superior.matd.parameters) {
+                                if (param.paramType == MaterialData.MaterialParameter.diffuseMap && param.diffuse_texture == s)
+                                {
+                                    backtrackSubfile(superior);
+                                    return;
+                                }
+                            }
+                            superior.Unload();
+                        }  
+                    }
+                    break;
+                case global.TypeID.MTST_MSK:
+                case global.TypeID.MTST_MSA:
+                    foreach (Subfile superior in global.activePackage.subfiles)
+                    {
+                        //look for RMDLs that reference this materialset
+
+                        if ((global.TypeID)superior.typeID == global.TypeID.RMDL_MSK || (global.TypeID)superior.typeID == global.TypeID.RMDL_MSA)
+                        {
+                            superior.Load();
+
+                                foreach (RevoModel.Mesh m in superior.rmdl.meshes)
+                                {
+                                    if (m.hash_of_material == s.hash)
+                                    {
+                                        MessageBox.Show("Succesfully backtracked to model: " + superior.filename);
+
+                                        foreach (TreeNode node in FileTree.Nodes[0].Nodes)
+                                        {
+                                            if (treeNodesAndSubfiles[node] == superior)
+                                            {
+                                                FileTree.SelectedNode = node;
+                                                break;
+                                            }
+                                        }
+                                        FileTree.SelectedNode.EnsureVisible();
+                                        return;
+                                    }
+                                }
+
+                            superior.Unload();
+                        }
+                    }
+                    break;
+                case global.TypeID.MATD_MSK:
+                case global.TypeID.MATD_MSA:
+                    foreach (Subfile superior in global.activePackage.subfiles)
+                    {
+                        //look for RMDLs and MTSTs that reference this material
+
+                       if ((global.TypeID)superior.typeID == global.TypeID.RMDL_MSK || (global.TypeID)superior.typeID == global.TypeID.RMDL_MSA 
+                           || (global.TypeID)superior.typeID == global.TypeID.MTST_MSK || (global.TypeID)superior.typeID == global.TypeID.MTST_MSA)
+                        {
+                            superior.Load();
+
+                            if (superior.rmdl != null)
+                            {
+                                foreach (RevoModel.Mesh m in superior.rmdl.meshes)
+                                {
+                                    if (m.materials.Contains(s.matd))
+                                    {
+                                        MessageBox.Show("Succesfully backtracked to model: " + superior.filename);
+
+                                        foreach (TreeNode node in FileTree.Nodes[0].Nodes)
+                                        {
+                                            if (treeNodesAndSubfiles[node] == superior)
+                                            {
+                                                FileTree.SelectedNode = node;
+                                                break;
+                                            }
+                                        }
+                                        FileTree.SelectedNode.EnsureVisible();
+                                        return;
+                                    }
+                                }
+                            }
+                            else if (superior.mtst != null){
+
+                                if (superior.mtst.mats.Contains(s.matd)){
+                                    backtrackSubfile(superior);
+                                    return;
+                                }
+                            }
+
+                            superior.Unload();
+                        }
+                    }
+                    break;
+                default:
+                    MessageBox.Show("Sorry, that type of file is not applicable for backtracking.");
+                    break;
+            }
+
         }
     }
 }

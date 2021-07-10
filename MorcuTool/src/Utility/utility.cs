@@ -78,11 +78,7 @@ namespace MorcuTool
         {
             byte[] bytes = BitConverter.GetBytes(input);
 
-            // if(isMSA.Checked || isSkyHeroes.Checked)
-            //    {
             Array.Reverse(bytes, 0, bytes.Length);
-            //   }
-
 
             return BitConverter.ToInt64(bytes, 0);
         }
@@ -90,12 +86,8 @@ namespace MorcuTool
         public static ulong ReverseEndianULong(ulong input)
         {
             byte[] bytes = BitConverter.GetBytes(input);
-
-            // if(isMSA.Checked || isSkyHeroes.Checked)
-            //    {
+       
             Array.Reverse(bytes, 0, bytes.Length);
-            //   }
-
 
             return BitConverter.ToUInt64(bytes, 0);
         }

@@ -54,7 +54,10 @@
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkBoxShape.cs" />
     <Compile Include="src\FileTypes\Subfiles\hkxFile.cs" />
     <Compile Include="src\FileTypes\Subfiles\LLMF.cs" />
+    <Compile Include="src\FileTypes\Subfiles\MaterialData.cs" />
+    <Compile Include="src\FileTypes\Subfiles\MaterialSet.cs" />
     <Compile Include="src\FileTypes\Subfiles\MsaCollision.cs" />
+    <Compile Include="src\FileTypes\Subfiles\TPLtexture.cs" />
     <Compile Include="src\Forms\SavePackageForm.cs">
       <SubType>Form</SubType>
     </Compile>

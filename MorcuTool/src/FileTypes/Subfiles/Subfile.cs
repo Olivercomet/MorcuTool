@@ -35,10 +35,13 @@ namespace MorcuTool
         public MsaCollision msaCol; //if needed
         public LLMF llmf; //if needed
         public RevoModel rmdl; //if needed
+        public MaterialSet mtst; //if needed
+        public MaterialData matd; //if needed
+        public TPLtexture tpl; //if needed
 
         public void Load()
         {
-            using (BinaryReader reader = new BinaryReader(File.Open(global.activePackage.filename, FileMode.Open)))
+            using (BinaryReader reader = new BinaryReader(File.Open(global.activePackage.filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)))
             {
                 reader.BaseStream.Position = fileoffset;
 
@@ -50,30 +53,36 @@ namespace MorcuTool
                     has_been_decompressed = true;
                 }
 
-                if (fileextension == ".tpl")
-                {
-                    filebytes = imageTools.ConvertToTPL(filename, filebytes).ToArray();
-                }
 
-
-                switch (typeID)
+                switch ((global.TypeID)typeID)
                 {
-                    case 0xD5988020:  //MySims Kingdom HKX 
+                    case global.TypeID.HKX_MSK:  //MySims Kingdom HKX 
                         hkx = new hkxFile(this);
                         break;
-                    case 0x1A8FEB14:  //MySims Agents mesh collision
+                    case global.TypeID.COLLISION_MSA:  //MySims Agents mesh collision
                         msaCol = new MsaCollision(this);
                         File.WriteAllLines(filename+".obj",msaCol.obj);
                         break;
-                    case 0xA5DCD485:                     //LLMF level bin MSA
-                    case 0x58969018:                     //LLMF level bin MSK   "LevelData"
+                    case global.TypeID.LLMF_MSK:                     //LLMF level bin MSK   "LevelData"
+                    case global.TypeID.LLMF_MSA:                     //LLMF level bin MSA
                         llmf = new LLMF(this);
                         llmf.GenerateReport();
                         break;
-                    case 0x2954E734:          //RMDL MSA     
-                    case 0xF9E50586:          //RMDL MSK   
+                    case global.TypeID.RMDL_MSK:          //RMDL MSK   
+                    case global.TypeID.RMDL_MSA:          //RMDL MSA     
                         rmdl = new RevoModel(this);
-                        rmdl.GenerateObj();
+                        break;
+                    case global.TypeID.MTST_MSK:          
+                    case global.TypeID.MTST_MSA:          
+                        mtst = new MaterialSet(this);
+                        break;
+                    case global.TypeID.MATD_MSK:          //MATD MSK            "MaterialData"
+                    case global.TypeID.MATD_MSA:          //MATD MSA    
+                        matd = new MaterialData(this);
+                        break;
+                    case global.TypeID.TPL_MSK:
+                    case global.TypeID.TPL_MSA:
+                        tpl = new TPLtexture(this);
                         break;
                 }
             }
@@ -99,17 +108,61 @@ namespace MorcuTool
 
                 saveFileDialog1.Title = "Export " + Path.GetFileName(filename);
                 saveFileDialog1.CheckPathExists = true;
-                saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
+
+                if (rmdl != null)
+                {
+                    saveFileDialog1.Filter = "Wavefront OBJ (*.obj)|*.obj|MySims RevoModel (*.rmdl)|*.rmdl";
+                    saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".rmdl", ".obj");
+                }
+                else if (tpl != null)
+                {
+                    saveFileDialog1.Filter = "PNG image (*.PNG)|*.png|TPL image (*.tpl)|*.tpl";
+                    saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".tpl", ".png");
+                }
+                else
+                {
+                    saveFileDialog1.Filter = fileextension.ToUpper() + " file (*" + fileextension + ")|*" + fileextension + "|All files (*.*)|*.*";
+                }
 
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     silentPath = saveFileDialog1.FileName;
                 }
             }
+            else {
+                if (tpl != null)
+                {
+                    silentPath = silentPath.Replace(".tpl", ".png");
+                }
+            }
 
             if (silentPath != null && silentPath != "")
             {
-                File.WriteAllBytes(silentPath, filebytes);
+                if (Path.GetExtension(silentPath) == ".obj" && (rmdl != null))
+                {
+                    rmdl.GenerateObj(silentPath);
+                }
+                else if (Path.GetExtension(silentPath) == ".png" && (tpl != null))
+                {
+                    if (tpl.images.Count > 1) {
+                        for (int i = 0; i < tpl.images.Count; i++)
+                        {
+                            tpl.images[i].Save(silentPath.Replace(".png", "_" + i + ".png"));
+                        }
+                    }
+                    else {
+                        tpl.images[0].Save(silentPath);
+                    }
+                }
+                else if (tpl != null && !tpl.has_been_converted_to_nintendo_format) {
+                    filebytes = imageTools.ConvertToTPL(filename, filebytes).ToArray();
+                    tpl.has_been_converted_to_nintendo_format = true;
+                }
+                else
+                {
+                    File.WriteAllBytes(silentPath, filebytes);
+                }
+                
                 if (global.activePackage.date.Year > 1)
                 {
                     File.SetLastWriteTime(silentPath, global.activePackage.date);
