@@ -96,7 +96,7 @@ namespace MorcuTool
                     }
 
 
-                uint meshcount = utility.ReverseEndian(reader.ReadUInt32());
+                uint meshcount = Utility.ReverseEndian(reader.ReadUInt32());
 
                 reader.BaseStream.Position = 0x30; //start of first object
 
@@ -104,11 +104,11 @@ namespace MorcuTool
 
                 reader.BaseStream.Position += 0x0C; //skip weird thing (coords of object?)
 
-                uint unk1offset = 0x30 + utility.ReverseEndian(reader.ReadUInt32());
-                uint unk1size = 0x30 + utility.ReverseEndian(reader.ReadUInt32());
+                uint unk1offset = 0x30 + Utility.ReverseEndian(reader.ReadUInt32());
+                uint unk1size = 0x30 + Utility.ReverseEndian(reader.ReadUInt32());
 
-                uint ObjectListOffset = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
-                uint ObjectListSize = 0x30 + utility.ReverseEndian(reader.ReadUInt32());    //this is not actually the size
+                uint ObjectListOffset = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                uint ObjectListSize = 0x30 + Utility.ReverseEndian(reader.ReadUInt32());    //this is not actually the size
 
                 reader.BaseStream.Position = unk1offset;
 
@@ -119,22 +119,22 @@ namespace MorcuTool
                 while (reader.BaseStream.Position < unk1offset + unk1size)
                     {
                     reader.BaseStream.Position += 0x04;
-                    ushort ID = utility.ReverseEndianShort(reader.ReadUInt16());
+                    ushort ID = Utility.ReverseEndianShort(reader.ReadUInt16());
                    // Console.WriteLine("break");
                     reader.BaseStream.Position += 0x0A;
 
-                    float U = utility.ReverseEndianSingle(reader.ReadSingle());
-                    float X = utility.ReverseEndianSingle(reader.ReadSingle());
+                    float U = Utility.ReverseEndianSingle(reader.ReadSingle());
+                    float X = Utility.ReverseEndianSingle(reader.ReadSingle());
 
                     reader.BaseStream.Position += 0x0C;
 
                     reader.BaseStream.Position += 0x1C;
 
-                    float Y = utility.ReverseEndianSingle(reader.ReadSingle());
+                    float Y = Utility.ReverseEndianSingle(reader.ReadSingle());
 
                     reader.BaseStream.Position += 0x04;
 
-                    float Z = utility.ReverseEndianSingle(reader.ReadSingle());
+                    float Z = Utility.ReverseEndianSingle(reader.ReadSingle());
 
                     //outputFile.Add("v " + X + " " + Y + " " + Z + " //"+ID);
                     reader.BaseStream.Position += 0x04;
@@ -162,18 +162,18 @@ namespace MorcuTool
 
                 reader.BaseStream.Position = ObjectListOffset;
                 
-                reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                reader.BaseStream.Position = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                 reader.BaseStream.Position += 0x04;
-                reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                reader.BaseStream.Position = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
 
                 if (MorcubusMode)
                 {
                     reader.BaseStream.Position += 0x04;
-                    reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                    reader.BaseStream.Position = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                 }
                 else
                 {
-                    reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                    reader.BaseStream.Position = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                 }
                 
                 
@@ -189,9 +189,9 @@ namespace MorcuTool
 
                 reader.BaseStream.Position += 0x03;
 
-                uint unk2sectioncount = utility.ReverseEndian(reader.ReadUInt32());
+                uint unk2sectioncount = Utility.ReverseEndian(reader.ReadUInt32());
 
-                reader.BaseStream.Position = utility.ReverseEndian(reader.ReadUInt32()) -0x20;
+                reader.BaseStream.Position = Utility.ReverseEndian(reader.ReadUInt32()) -0x20;
 
                 uint VertexCountForStartVertexCalculation = 0;
 
@@ -199,14 +199,14 @@ namespace MorcuTool
                     {
                     mdlObject newObject = new mdlObject();
                     reader.BaseStream.Position += 0x1C;
-                    newObject.vertexCount = utility.ReverseEndian(reader.ReadUInt32());
+                    newObject.vertexCount = Utility.ReverseEndian(reader.ReadUInt32());
                     newObject.StartingVertexID = VertexCountForStartVertexCalculation;
                     VertexCountForStartVertexCalculation += newObject.vertexCount;
-                    newObject.vertexListOffset = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                    newObject.vertexListOffset = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                     reader.BaseStream.Position += 0x08;
-                    newObject.facesToRemoveOffset = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                    newObject.facesToRemoveOffset = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                     reader.BaseStream.Position += 0x04;
-                    newObject.faceListOffset = utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
+                    newObject.faceListOffset = Utility.ReverseEndian(reader.ReadUInt32()) - 0x10;
                     reader.BaseStream.Position += 0x0C;
                     Console.WriteLine("break");
                     objects.Add(newObject);
@@ -253,16 +253,16 @@ namespace MorcuTool
 
                         Vertex newVertex = new Vertex();
 
-                        newVertex.X = utility.ReverseEndianSingle(reader.ReadSingle());
-                        newVertex.Y = utility.ReverseEndianSingle(reader.ReadSingle());
-                        newVertex.Z = utility.ReverseEndianSingle(reader.ReadSingle());
+                        newVertex.position.x = Utility.ReverseEndianSingle(reader.ReadSingle());
+                        newVertex.position.y = Utility.ReverseEndianSingle(reader.ReadSingle());
+                        newVertex.position.z = Utility.ReverseEndianSingle(reader.ReadSingle());
 
                         o.vertices.Add(newVertex);
 
                         reader.BaseStream.Position += 0x10;
 
-                        newVertex.U = utility.ReverseEndianSingle(reader.ReadSingle());
-                        newVertex.V = utility.ReverseEndianSingle(reader.ReadSingle()) * -1;
+                        newVertex.UVchannels[0].x = Utility.ReverseEndianSingle(reader.ReadSingle());
+                        newVertex.UVchannels[0].y = Utility.ReverseEndianSingle(reader.ReadSingle()) * -1;
 
                         reader.BaseStream.Position += 0x14;
                     }
@@ -274,7 +274,7 @@ namespace MorcuTool
                     while (reader.ReadByte() != 0xEF)
                     {
                         reader.BaseStream.Position -= 0x01;
-                        o.facesToRemove.Add(utility.ReverseEndianShort(reader.ReadUInt16()));
+                        o.facesToRemove.Add(Utility.ReverseEndianShort(reader.ReadUInt16()));
                     }
 
                     reader.BaseStream.Position = o.faceListOffset;
@@ -290,10 +290,10 @@ namespace MorcuTool
                     {
                         reader.BaseStream.Position -= 0x04;
                         
-                        face newface = new face();
-                        newface.v1 = (ushort)(utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
-                        newface.v2 = (ushort)(utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
-                        newface.v3 = (ushort)(utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
+                        Face newface = new Face();
+                        newface.v1 = (ushort)(Utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
+                        newface.v2 = (ushort)(Utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
+                        newface.v3 = (ushort)(Utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
                         //newface.v4 = (ushort)(utility.ReverseEndianShort(reader.ReadUInt16()) + 1);
 
                         if (newface.v3 > o.vertexCount)
@@ -340,15 +340,15 @@ namespace MorcuTool
 
                     foreach (Vertex v in o.vertices)
                         {
-                        outputFile.Add("v " + v.X + " " + v.Y + " " + v.Z);
+                        outputFile.Add("v " + v.position.x + " " + v.position.y + " " + v.position.z);
                         }
 
                     foreach (Vertex v in o.vertices)
                     {
-                        outputFile.Add("vt " + v.U + " " + v.V);
+                        outputFile.Add("vt " + v.UVchannels[0].x + " " + v.UVchannels[0].y);
                     }
 
-                    foreach (face f in o.faces)
+                    foreach (Face f in o.faces)
                     {
                         outputFile.Add("f " + (o.StartingVertexID + f.v1) + "/" + (o.StartingVertexID + f.v1) + " " + (o.StartingVertexID + f.v2) + "/" + (o.StartingVertexID + f.v2) + " " + (o.StartingVertexID + f.v3) + "/" + (o.StartingVertexID + f.v3));
                         
@@ -540,7 +540,7 @@ namespace MorcuTool
             {
                 foreach (string filename in openFileDialog2.FileNames)
                 {
-                    File.WriteAllBytes(filename+"decomp" , utility.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
+                    File.WriteAllBytes(filename+"decomp" , Utility.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
                 }
             }
         }

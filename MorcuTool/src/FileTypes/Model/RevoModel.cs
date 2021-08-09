@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MorcuTool.MorcuMath;
 
 namespace MorcuTool
 {
@@ -19,7 +20,7 @@ namespace MorcuTool
             public List<Vertex> vertices = new List<Vertex>();
             public List<Vertex> normals = new List<Vertex>();
             public List<Vertex> texCoords = new List<Vertex>();
-            public List<face> faces = new List<face>();
+            public List<Face> faces = new List<Face>();
 
             public List<MaterialData> materials = new List<MaterialData>();
 
@@ -117,50 +118,50 @@ namespace MorcuTool
 
             int pos = 0;
 
-            magic = utility.ReadUInt32BigEndian(basis.filebytes,pos); pos += 4;
-            flags = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+            magic = Utility.ReadUInt32BigEndian(basis.filebytes,pos); pos += 4;
+            flags = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
             pos += 0x18;
 
-            int meshcount = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-            int meshtableoffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+            int meshcount = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+            int meshtableoffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
             for (int m = 0; m < meshcount; m++)
             {
                 Mesh newMesh = new Mesh();
 
                 pos = meshtableoffset + (m * 4);
-                int meshInfoTableOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int meshInfoTableOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                 pos = meshInfoTableOffset;
 
-                int displayListSize = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-                int displayListOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-                int numVertAttributes = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-                int vertDataOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int displayListSize = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int displayListOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int numVertAttributes = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int vertDataOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
-                newMesh.hash_of_material = utility.ReadUInt64BigEndian(basis.filebytes, pos); pos += 8;
-                uint typeID_of_material = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
-                uint unk2 = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                newMesh.hash_of_material = Utility.ReadUInt64BigEndian(basis.filebytes, pos); pos += 8;
+                uint typeID_of_material = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                uint unk2 = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
-                float boundsMinX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                float boundsMinY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                float boundsMinZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMinX = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMinY = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMinZ = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
 
-                float boundsMaxX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                float boundsMaxY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                float boundsMaxZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMaxX = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMaxY = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                float boundsMaxZ = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
 
-                uint unk3 = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
-                uint unk4 = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                uint unk3 = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                uint unk4 = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
-                uint unk5 = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4; //FNV-1 hash of "none" in MySims Kingdom. Different in Agents.
+                uint unk5 = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4; //FNV-1 hash of "none" in MySims Kingdom. Different in Agents.
 
                 pos += 12;
 
-                int boneToMatrixBindingInfoOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-                int boneNamesOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
-                int boneInfoOffset = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int boneToMatrixBindingInfoOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int boneNamesOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                int boneInfoOffset = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                 //now read vertex data
 
@@ -180,7 +181,7 @@ namespace MorcuTool
 
                     pos += 2; //skip padding
 
-                    pos = utility.ReadInt32BigEndian(basis.filebytes, pos); //now go to the start of the actual entries
+                    pos = Utility.ReadInt32BigEndian(basis.filebytes, pos); //now go to the start of the actual entries
 
 
 
@@ -190,13 +191,13 @@ namespace MorcuTool
                             stopPoint = basis.filebytes.Length;
                         }
                         else {
-                            stopPoint = utility.ReadInt32BigEndian(basis.filebytes, meshtableoffset + ((m + 1) * 4));
+                            stopPoint = Utility.ReadInt32BigEndian(basis.filebytes, meshtableoffset + ((m + 1) * 4));
                         }
                         
                     }
 
                     if (v < numVertAttributes - 1) { //but if we're not at the last vertex array yet, then the endpoint is the start of the next array
-                        stopPoint = utility.ReadInt32BigEndian(basis.filebytes, vertDataOffset + ((v+1) * 8) + 4);
+                        stopPoint = Utility.ReadInt32BigEndian(basis.filebytes, vertDataOffset + ((v+1) * 8) + 4);
                     }
 
                     int checkAheadAmount = 12;
@@ -271,8 +272,8 @@ namespace MorcuTool
                                     if (vertexComponentSize == VertexAttributeComponentSize.GX_F32)
                                     {
                                         checkAheadAmount = 8;
-                                        newVertex.X = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.Y = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.position.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.position.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else
                                     {
@@ -284,9 +285,9 @@ namespace MorcuTool
                                     if (vertexComponentSize == VertexAttributeComponentSize.GX_F32)
                                     {
                                         checkAheadAmount = 12;
-                                        newVertex.X = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.Y = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.Z = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.position.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.position.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.position.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else
                                     {
@@ -307,9 +308,9 @@ namespace MorcuTool
                                     if (vertexComponentSize == VertexAttributeComponentSize.GX_F32)
                                     {
                                         checkAheadAmount = 12;
-                                        newVertex.normalX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else
                                     {
@@ -321,15 +322,15 @@ namespace MorcuTool
                                     if (vertexComponentSize == VertexAttributeComponentSize.GX_F32)
                                     {
                                         checkAheadAmount = 36;
-                                        newVertex.normalX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.binormalX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.binormalY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.binormalZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.tangentX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.tangentY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.tangentZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.binormal.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.binormal.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.binormal.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.tangent.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.tangent.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.tangent.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else
                                     {
@@ -341,15 +342,19 @@ namespace MorcuTool
                                     if (vertexComponentSize == VertexAttributeComponentSize.GX_F32)
                                     {
                                         checkAheadAmount = 12;
-                                        newVertex.normalX = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalY = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.normalZ = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.x = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        newVertex.normal.z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
                                     }
                                     else if (vertexComponentSize == VertexAttributeComponentSize.GX_U8)
                                     {
                                         checkAheadAmount = 8;  //APPARENTLY IT IGNORES THE U8 AND READS FLOATS INSTEAD.
-                                        newVertex.U = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                                        newVertex.V = 1 - utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        
+                                        float U = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                                        float V = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+
+                                        newVertex.UVchannels[(int)vertexArrayType - 13] = new MorcuMath.Vector2(U, V);
+                                        
                                     }
                                     else
                                     {
@@ -446,7 +451,7 @@ namespace MorcuTool
                                 //Console.WriteLine("Found drawtype at "+pos+": " + drawType);
 
                                 // Read element amount
-                                int elemCount = utility.ReadUInt16BigEndian(basis.filebytes,pos); pos += 2;
+                                int elemCount = Utility.ReadUInt16BigEndian(basis.filebytes,pos); pos += 2;
 
                                     switch (drawType) {
 
@@ -458,7 +463,7 @@ namespace MorcuTool
                                             
                                             for (int f = 0; f < elemCount / vertsMax; f++)
                                             {
-                                                face newFace = new face();
+                                                Face newFace = new Face();
                                                 for (int i = 0; i < vertsMax; i++)
                                                 {
                                                     if (boneNamesOffset != 0)
@@ -490,7 +495,7 @@ namespace MorcuTool
                                             break;
                                         case DrawType.triangleStrip:
                                             {
-                                                face newFace = new face();
+                                                Face newFace = new Face();
                                                 int currentV = 0;
                                                 int backupPos = 0;
                                                 bool winding = false;
@@ -546,7 +551,7 @@ namespace MorcuTool
                                                     if (currentV == 3)
                                                     { //if we just finished making a triangle
                                                         newMesh.faces.Add(newFace);
-                                                        newFace = new face();
+                                                        newFace = new Face();
                                                         currentV = 0;
                                                         if (i < elemCount - 1)
                                                         { //as long as we're not on the very last one, there's still work to do so back up a bit and keep reading the strip
@@ -632,12 +637,12 @@ namespace MorcuTool
                 obj.Add("object "+meshes.IndexOf(m));
 
                 for (int v = 0; v < m.vertices.Count; v++) {
-                    obj.Add("v "+m.vertices[v].X + " " + m.vertices[v].Y + " " + m.vertices[v].Z);
+                    obj.Add("v "+m.vertices[v].position.x + " " + m.vertices[v].position.y + " " + m.vertices[v].position.z);
                 }
                 
                 for (int v = 0; v < m.normals.Count; v++)
                 {
-                    obj.Add("vn " + m.normals[v].normalX + " " + m.normals[v].normalY + " " +m.normals[v].normalZ);
+                    obj.Add("vn " + m.normals[v].normal.x + " " + m.normals[v].normal.y + " " +m.normals[v].normal.z);
                 }
 
                 if (m.materials.Count > 0)
@@ -647,7 +652,7 @@ namespace MorcuTool
 
                 for (int v = 0; v < m.texCoords.Count; v++)
                 {
-                    obj.Add("vt " + m.texCoords[v].U + " " + m.texCoords[v].V);
+                    obj.Add("vt " + m.texCoords[v].UVchannels[0].x + " " + (m.texCoords[v].UVchannels[0].y * -1));
                 }
 
                 for (int f = 0; f < m.faces.Count; f++)
@@ -702,35 +707,35 @@ namespace MorcuTool
             }
         }
 
-        public face AddAttrToFace(byte[] filebytes, int pos, VertexAttributeArrayType attr, face f, int vertIndex) {
+        public Face AddAttrToFace(byte[] filebytes, int pos, VertexAttributeArrayType attr, Face f, int vertIndex) {
 
             switch (attr) {
 
                 case VertexAttributeArrayType.GX_VA_POS:
 
                     switch (vertIndex) {        //I'm aware that this is an awful way to do it, but I don't want to go back and refactor the skyheroes code right now
-                        case 0: f.v1 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 1: f.v2 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 2: f.v3 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 3: f.v4 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 0: f.v1 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 1: f.v2 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 2: f.v3 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 3: f.v4 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
                     break;
                 case VertexAttributeArrayType.GX_VA_NRM:
                     switch (vertIndex)
                     {        //I'm aware that this is an awful way to do it, but I don't want to go back and refactor the skyheroes code right now
-                        case 0: f.vn1 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 1: f.vn2 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 2: f.vn3 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 3: f.vn4 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 0: f.vn1 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 1: f.vn2 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 2: f.vn3 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 3: f.vn4 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
                     break;
                 case VertexAttributeArrayType.GX_VA_TEX0:
                     switch (vertIndex)
                     {        //I'm aware that this is an awful way to do it, but I don't want to go back and refactor the skyheroes code right now
-                        case 0: f.vt1 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 1: f.vt2 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 2: f.vt3 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 3: f.vt4 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 0: f.vt1 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 1: f.vt2 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 2: f.vt3 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 3: f.vt4 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
                     break;
                 case VertexAttributeArrayType.GX_VA_TEX1:
@@ -758,10 +763,10 @@ namespace MorcuTool
                 case VertexAttributeArrayType.GX_VA_CLR1:
                     switch (vertIndex)
                     {        //I'm aware that this is an awful way to do it, but I don't want to go back and refactor the skyheroes code right now
-                        case 0: f.vc1 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 1: f.vc2 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 2: f.vc3 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
-                        case 3: f.vc4 = utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 0: f.vc1 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 1: f.vc2 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 2: f.vc3 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
+                        case 3: f.vc4 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
                     break;
                 default:

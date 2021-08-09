@@ -39,33 +39,33 @@ namespace MorcuTool
 
             int pos = 0x28;
 
-            int numLevelModels = utility.ReadInt32BigEndian(basis.filebytes,pos);
+            int numLevelModels = Utility.ReadInt32BigEndian(basis.filebytes,pos);
             pos += 4;
-            int numObjects = utility.ReadInt32BigEndian(basis.filebytes, pos);
+            int numObjects = Utility.ReadInt32BigEndian(basis.filebytes, pos);
             pos += 4;
 
             pos = 0x48;
             
             for (int i = 0; i < numLevelModels; i++) {
-                levelModels.Add(new LevelEntry() { modelHash = utility.ReverseEndianULong(BitConverter.ToUInt64(basis.filebytes,pos))});
+                levelModels.Add(new LevelEntry() { modelHash = Utility.ReverseEndianULong(BitConverter.ToUInt64(basis.filebytes,pos))});
                 pos += 8;
             }
 
             for (int i = 0; i < numObjects; i++)
             {
                 ObjectEntry newObject = new ObjectEntry();
-                newObject.modelHash = utility.ReverseEndianULong(BitConverter.ToUInt64(basis.filebytes, pos)); pos += 8;
-                newObject.X = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.Y = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.Z = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.xRot = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.yRot = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.zRot = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.xScale = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.yScale = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
-                newObject.zScale = utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.modelHash = Utility.ReverseEndianULong(BitConverter.ToUInt64(basis.filebytes, pos)); pos += 8;
+                newObject.X = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.Y = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.Z = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.xRot = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.yRot = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.zRot = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.xScale = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.yScale = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
+                newObject.zScale = Utility.ReadSingleBigEndian(basis.filebytes, pos); pos += 4;
 
-                newObject.materialCount = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+                newObject.materialCount = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                 for (int j = 0; j < newObject.materialCount; j++) {
                     pos += 16;

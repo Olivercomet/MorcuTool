@@ -34,8 +34,8 @@ namespace MorcuTool
                 while (reader.BaseStream.Position < 0x32EBEB)   //I don't know if this is quite the right address
                 {
                     luaString newLuaString = new luaString();
-                    newLuaString.hash = utility.ReverseEndian(reader.ReadUInt32());
-                    newLuaString.nameOffset = utility.ReverseEndian(reader.ReadUInt32());
+                    newLuaString.hash = Utility.ReverseEndian(reader.ReadUInt32());
+                    newLuaString.nameOffset = Utility.ReverseEndian(reader.ReadUInt32());
 
                     luaStrings.Add(newLuaString);
                 }
@@ -64,8 +64,8 @@ namespace MorcuTool
 
                 for (uint i = 0; i < 0xEDB4; i++)
                 {
-                    ulong hash = utility.ReverseEndianULong(reader.ReadUInt64());
-                    ulong index = utility.ReverseEndianULong(reader.ReadUInt64());
+                    ulong hash = Utility.ReverseEndianULong(reader.ReadUInt64());
+                    ulong index = Utility.ReverseEndianULong(reader.ReadUInt64());
 
                     VaultHashesAndIndexes.Add(hash, index);
                 }

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MorcuTool.MorcuMath;
 
 namespace MorcuTool
 {
@@ -11,35 +12,23 @@ namespace MorcuTool
     {
         uint startingVertexID;
 
-        public float X;
-        public float Y;
-        public float Z;
+        public Vector3 position = new Vector3();
         public float W; //when needed
 
-        public float U;
-        public float V;
+        public Vector2[] UVchannels = new Vector2[8];
 
+        public Vector3 normal = new Vector3();
 
-        public float normalX;
-        public float normalY;
-        public float normalZ;
+        public Vector3 binormal = new Vector3();
 
-        public float binormalX;
-        public float binormalY;
-        public float binormalZ;
-
-        public float tangentX;
-        public float tangentY;
-        public float tangentZ;
+        public Vector3 tangent = new Vector3();
 
         public Color color;
 
         public Vertex() { 
         }
         public Vertex(float x, float y, float z) {
-            X = x;
-            Y = y;
-            Z = z;
+            position = new Vector3(x, y, z);
         }
     }
 }

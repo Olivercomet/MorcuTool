@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MorcuTool
 {
-    public static class utility
+    public static class Utility
     {
 
         public static bool send_unfinished_notification = true;
@@ -99,6 +99,35 @@ namespace MorcuTool
             Array.Reverse(bytes, 0, bytes.Length);
 
             return BitConverter.ToSingle(bytes, 0);
+        }
+
+        public static float ReadFloat(byte[] source, int offset, bool isBigEndian)
+        {
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                if (isBigEndian)
+                {
+                    return BitConverter.ToSingle(source, offset);
+                }
+                else
+                {
+                    byte[] bytes = new byte[] { source[offset + 3], source[offset + 2], source[offset + 1], source[offset] };
+                    return BitConverter.ToSingle(bytes, 0);
+                }
+            }
+            else
+            {
+                if (isBigEndian)
+                {
+                    byte[] bytes = new byte[] { source[offset + 3], source[offset + 2], source[offset + 1], source[offset] };
+                    return BitConverter.ToSingle(bytes, 0);
+                }
+                else
+                {
+                    return BitConverter.ToSingle(source, offset);
+                }
+            }
         }
 
 

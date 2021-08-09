@@ -39,10 +39,10 @@ namespace MorcuTool
 
             public Param(byte[] bytes, int pos) {
 
-                paramType = (MaterialParameter)utility.ReadInt32BigEndian(bytes, pos); pos += 4;
-                unk = utility.ReadInt32BigEndian(bytes, pos); pos += 4;
-                dataSizeDividedBy4 = utility.ReadInt32BigEndian(bytes, pos); pos += 4;
-                dataOffset = utility.ReadInt32BigEndian(bytes, pos);
+                paramType = (MaterialParameter)Utility.ReadInt32BigEndian(bytes, pos); pos += 4;
+                unk = Utility.ReadInt32BigEndian(bytes, pos); pos += 4;
+                dataSizeDividedBy4 = Utility.ReadInt32BigEndian(bytes, pos); pos += 4;
+                dataOffset = Utility.ReadInt32BigEndian(bytes, pos);
             }
         }
 
@@ -59,8 +59,8 @@ namespace MorcuTool
 
             pos += 0x08;
 
-            int lengthOfDataSection = utility.ReadInt32BigEndian(basis.filebytes,pos); pos += 4;
-            int numberOfParams = utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
+            int lengthOfDataSection = Utility.ReadInt32BigEndian(basis.filebytes,pos); pos += 4;
+            int numberOfParams = Utility.ReadInt32BigEndian(basis.filebytes, pos); pos += 4;
 
             //now the param list begins. Each param has 0x10 bytes describing it, with an offset to later in the file (falling within the data section, but measured from 0x10)
 
@@ -77,13 +77,13 @@ namespace MorcuTool
 
                 switch (parameter.paramType) {
                     case MaterialParameter.diffuseMap:
-                        ulong hash_of_diffuse_texture = (ulong)utility.ReadUInt32BigEndian(basis.filebytes,pos); pos += 4;
-                        hash_of_diffuse_texture |= ((ulong)utility.ReadUInt32BigEndian(basis.filebytes, pos)) << 32; pos += 4;
+                        ulong hash_of_diffuse_texture = (ulong)Utility.ReadUInt32BigEndian(basis.filebytes,pos); pos += 4;
+                        hash_of_diffuse_texture |= ((ulong)Utility.ReadUInt32BigEndian(basis.filebytes, pos)) << 32; pos += 4;
                         if (hash_of_diffuse_texture == 0x58CC31A1AC11E901) {
                             Console.WriteLine("Here it is!!");
                         }
 
-                        uint typeID_of_diffuse_texture = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                        uint typeID_of_diffuse_texture = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                         parameter.diffuse_texture = global.activePackage.FindFileByHashAndTypeID(hash_of_diffuse_texture,typeID_of_diffuse_texture);
                         break;

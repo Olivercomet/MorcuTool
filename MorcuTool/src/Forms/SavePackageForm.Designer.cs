@@ -75,7 +75,7 @@
             // 
             // CreatePackageButton
             // 
-            this.CreatePackageButton.Location = new System.Drawing.Point(65, 272);
+            this.CreatePackageButton.Location = new System.Drawing.Point(62, 268);
             this.CreatePackageButton.Name = "CreatePackageButton";
             this.CreatePackageButton.Size = new System.Drawing.Size(143, 36);
             this.CreatePackageButton.TabIndex = 3;

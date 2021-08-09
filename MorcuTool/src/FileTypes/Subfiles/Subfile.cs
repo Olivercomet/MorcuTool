@@ -50,7 +50,7 @@ namespace MorcuTool
 
                 if (uncompressedsize > 0) //if it's a compressed file
                 {
-                    filebytes = utility.Decompress_QFS(filebytes);
+                    filebytes = Utility.Decompress_QFS(filebytes);
                     has_been_decompressed = true;
                 }
 

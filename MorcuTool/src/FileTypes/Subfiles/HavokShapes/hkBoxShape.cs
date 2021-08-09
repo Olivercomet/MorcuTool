@@ -14,10 +14,10 @@ namespace MorcuTool
         public float unk;
 
         public hkBoxShape(Subfile basis, int objectOffset) {
-            x = utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x10));
-            y = utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x14));
-            z = utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x18));
-            unk = utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x1C));
+            x = Utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x10));
+            y = Utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x14));
+            z = Utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x18));
+            unk = Utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 0x1C));
         }
     }
 }

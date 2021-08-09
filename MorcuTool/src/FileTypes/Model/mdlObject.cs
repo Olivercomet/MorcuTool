@@ -20,6 +20,6 @@ namespace MorcuTool
         public List<ushort> facesToRemove = new List<ushort>();
 
         public List<Vertex> vertices = new List<Vertex>();
-        public List<face> faces = new List<face>();
+        public List<Face> faces = new List<Face>();
     }
 }

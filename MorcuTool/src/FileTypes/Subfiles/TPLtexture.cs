@@ -47,7 +47,7 @@ namespace MorcuTool
 
             int pos = 0;
 
-            if (global.activePackage.packageType == Package.PackageType.SkyHeroes && utility.ReadUInt32BigEndian(basis.filebytes,pos) != 0)        //skip those annoying extra headers from MySims SkyHeroes
+            if (global.activePackage.packageType == Package.PackageType.SkyHeroes && Utility.ReadUInt32BigEndian(basis.filebytes,pos) != 0)        //skip those annoying extra headers from MySims SkyHeroes
             {
                 startoffile = 0x50;
             }
@@ -56,23 +56,23 @@ namespace MorcuTool
 
             if (global.activePackage.packageType == Package.PackageType.Agents || global.activePackage.packageType == Package.PackageType.Kingdom)
             {
-                magic = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                magic = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
-                flags = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                flags = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
 
                 if (version == 1)   //MYSIMS
                 {
                     pos = 0x1C;
 
-                    width = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    width = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 2;
-                    height = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    height = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 5;
 
                     imageformat = (ImageFormat)basis.filebytes[pos];
                     pos++;
-                    imagecount = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                    imagecount = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                     pos += 4;
 
                     pos += 0x14;
@@ -86,14 +86,14 @@ namespace MorcuTool
                 {
                     pos = 0x1C;
 
-                    width = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    width = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 2;
-                    height = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    height = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 5;
 
                     imageformat = (ImageFormat)basis.filebytes[pos];
                     pos++;
-                    imagecount = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                    imagecount = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                     pos += 4;
 
                     pos += 0x14;
@@ -105,40 +105,40 @@ namespace MorcuTool
                 }
                 else if (version == 3)   //MYSIMS KINGDOM AND AGENTS
                 {
-                    imagesize = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                    imagesize = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                     pos += 4;
 
                     pos += 0x0C;
 
-                    width = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    width = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 2;
-                    height = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                    height = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                     pos += 5;
 
                     imageformat = (ImageFormat)basis.filebytes[pos];
                     pos++;
-                    imagecount = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                    imagecount = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                     pos += 4;
 
                     pos += 0x14;
 
-                    imageoffset = utility.ReadInt32BigEndian(basis.filebytes, pos);
+                    imageoffset = Utility.ReadInt32BigEndian(basis.filebytes, pos);
                     pos += 4;
                 }
             }
             else if (global.activePackage.packageType == Package.PackageType.SkyHeroes)
             {
-                magic = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                magic = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
-                flags = utility.ReadUInt32BigEndian(basis.filebytes,pos);
+                flags = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
 
                 pos += 6;
-                width = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                width = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
                 pos += 2;
 
                 pos += 2;
-                height = utility.ReadUInt16BigEndian(basis.filebytes, pos);
+                height = Utility.ReadUInt16BigEndian(basis.filebytes, pos);
 
                 pos += 0x2D;
 
@@ -190,8 +190,8 @@ namespace MorcuTool
 
                                     Color[] cols = new Color[4];
 
-                                    ushort col0ushort = utility.ReadUInt16BigEndian(basis.filebytes, pos); pos += 2;
-                                    ushort col1ushort = utility.ReadUInt16BigEndian(basis.filebytes, pos); pos += 2;
+                                    ushort col0ushort = Utility.ReadUInt16BigEndian(basis.filebytes, pos); pos += 2;
+                                    ushort col1ushort = Utility.ReadUInt16BigEndian(basis.filebytes, pos); pos += 2;
                                     cols[0] = imageTools.ToRGB565(col0ushort);
                                     cols[1] = imageTools.ToRGB565(col1ushort);
 
@@ -209,7 +209,7 @@ namespace MorcuTool
                                         cols[3] = Color.FromArgb(0, 0, 0, 0);
                                     }
 
-                                    uint indices = utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
+                                    uint indices = Utility.ReadUInt32BigEndian(basis.filebytes, pos); pos += 4;
 
                                     int xOffset = 0;
                                     int yOffset = 0;

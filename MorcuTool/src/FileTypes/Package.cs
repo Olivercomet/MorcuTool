@@ -77,7 +77,7 @@ namespace MorcuTool
             {
                 uint magic = 0;
 
-                magic = utility.ReverseEndian(reader.ReadUInt32());
+                magic = Utility.ReverseEndian(reader.ReadUInt32());
 
                 switch (magic)
                     {
@@ -105,27 +105,27 @@ namespace MorcuTool
 
                 if (packageType == PackageType.Agents)
                 {
-                    majorversion = utility.ReverseEndian(reader.ReadUInt32());
-                    minorversion = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown1 = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown2 = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown3 = utility.ReverseEndian(reader.ReadUInt32());
-                    date = DateTime.FromBinary(utility.ReverseEndianLong(reader.ReadInt64()));
-                    indexmajorversion = utility.ReverseEndian(reader.ReadUInt32());
+                    majorversion = Utility.ReverseEndian(reader.ReadUInt32());
+                    minorversion = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown1 = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown2 = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown3 = Utility.ReverseEndian(reader.ReadUInt32());
+                    date = DateTime.FromBinary(Utility.ReverseEndianLong(reader.ReadInt64()));
+                    indexmajorversion = Utility.ReverseEndian(reader.ReadUInt32());
 
-                    filecount = utility.ReverseEndian(reader.ReadUInt32());
-                    indexoffsetdeprecated = utility.ReverseEndian(reader.ReadUInt32());
-                    indexsize = utility.ReverseEndian(reader.ReadUInt32());
-                    holeentrycount = utility.ReverseEndian(reader.ReadUInt32());
-                    holeoffset = utility.ReverseEndian(reader.ReadUInt32());
-                    holesize = utility.ReverseEndian(reader.ReadUInt32());
-                    indexminorversion = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown4 = utility.ReverseEndian(reader.ReadUInt32());
-                    indexoffset = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown5 = utility.ReverseEndian(reader.ReadUInt32());
-                    unknown6 = utility.ReverseEndian(reader.ReadUInt32());
-                    reserved1 = utility.ReverseEndian(reader.ReadUInt32());
-                    reserved2 = utility.ReverseEndian(reader.ReadUInt32());
+                    filecount = Utility.ReverseEndian(reader.ReadUInt32());
+                    indexoffsetdeprecated = Utility.ReverseEndian(reader.ReadUInt32());
+                    indexsize = Utility.ReverseEndian(reader.ReadUInt32());
+                    holeentrycount = Utility.ReverseEndian(reader.ReadUInt32());
+                    holeoffset = Utility.ReverseEndian(reader.ReadUInt32());
+                    holesize = Utility.ReverseEndian(reader.ReadUInt32());
+                    indexminorversion = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown4 = Utility.ReverseEndian(reader.ReadUInt32());
+                    indexoffset = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown5 = Utility.ReverseEndian(reader.ReadUInt32());
+                    unknown6 = Utility.ReverseEndian(reader.ReadUInt32());
+                    reserved1 = Utility.ReverseEndian(reader.ReadUInt32());
+                    reserved2 = Utility.ReverseEndian(reader.ReadUInt32());
                 }
                 else
                 {
@@ -134,7 +134,7 @@ namespace MorcuTool
                     unknown1 = reader.ReadUInt32();
                     unknown2 = reader.ReadUInt32();
                     unknown3 = reader.ReadUInt32();
-                    date = DateTime.FromBinary(utility.ReverseEndianLong(reader.ReadInt64()));
+                    date = DateTime.FromBinary(Utility.ReverseEndianLong(reader.ReadInt64()));
                     indexmajorversion = reader.ReadUInt32();
 
                     filecount = reader.ReadUInt32();
@@ -160,16 +160,16 @@ namespace MorcuTool
 
                 if (packageType == PackageType.Agents)
                 {
-                    indexnumberofentries = utility.ReverseEndianULong(reader.ReadUInt64());
+                    indexnumberofentries = Utility.ReverseEndianULong(reader.ReadUInt64());
 
                     for (uint i = 0; i < indexnumberofentries; i++)  //a bunch of entries that describe how many files there are of each type
                     {
                         IndexEntry newEntry = new IndexEntry();
 
-                        newEntry.typeID = utility.ReverseEndian(reader.ReadUInt32());
-                        newEntry.groupID = utility.ReverseEndian(reader.ReadUInt32());
-                        newEntry.typeNumberOfInstances = utility.ReverseEndian(reader.ReadUInt32());
-                        newEntry.indexnulls = utility.ReverseEndian(reader.ReadUInt32());
+                        newEntry.typeID = Utility.ReverseEndian(reader.ReadUInt32());
+                        newEntry.groupID = Utility.ReverseEndian(reader.ReadUInt32());
+                        newEntry.typeNumberOfInstances = Utility.ReverseEndian(reader.ReadUInt32());
+                        newEntry.indexnulls = Utility.ReverseEndian(reader.ReadUInt32());
 
                         IndexEntries.Add(newEntry);
                     }
@@ -180,16 +180,16 @@ namespace MorcuTool
                     for (uint i = 0; i < filecount; i++)     //go through the files, they are organised by type, one type after the other. (So X number of type A, as described above, then Y number of type B...)
                     {
                         Subfile newSubfile = new Subfile();
-                        newSubfile.hash = utility.ReverseEndianULong(reader.ReadUInt64());
-                        newSubfile.fileoffset = utility.ReverseEndian(reader.ReadUInt32());
-                        newSubfile.filesize = utility.ReverseEndian(reader.ReadUInt32());
+                        newSubfile.hash = Utility.ReverseEndianULong(reader.ReadUInt64());
+                        newSubfile.fileoffset = Utility.ReverseEndian(reader.ReadUInt32());
+                        newSubfile.filesize = Utility.ReverseEndian(reader.ReadUInt32());
                         newSubfile.typeID = IndexEntries[currenttypeindexbeingprocessed].typeID;
                         newSubfile.groupID = IndexEntries[currenttypeindexbeingprocessed].groupID;
 
                         if (IndexEntries[currenttypeindexbeingprocessed].groupID != 0)   //it's compressed
                         {
                             newSubfile.should_be_compressed_when_in_package = true;
-                            newSubfile.uncompressedsize = utility.ReverseEndian(reader.ReadUInt32());
+                            newSubfile.uncompressedsize = Utility.ReverseEndian(reader.ReadUInt32());
                             Console.WriteLine("Found a compressed file");
                         }
 
@@ -664,11 +664,11 @@ namespace MorcuTool
 
 
 
-                        byte[] newfilenameasbytes = BitConverter.GetBytes(utility.ReverseEndianULong(subfiles[i].hash));
+                        byte[] newfilenameasbytes = BitConverter.GetBytes(Utility.ReverseEndianULong(subfiles[i].hash));
 
                         subfiles[i].filename = "0x";
 
-                        ulong newfilenameasulong = utility.ReverseEndianULong(subfiles[i].hash);
+                        ulong newfilenameasulong = Utility.ReverseEndianULong(subfiles[i].hash);
 
                         subfiles[i].hashString = "0x" + BitConverter.ToString(newfilenameasbytes).Replace("-", "");
 
@@ -722,7 +722,7 @@ namespace MorcuTool
 
                     for (int i = 0; i < global.activeVault.luaStrings.Count; i++)
                     {
-                        luaStringsForExport[i] = BitConverter.ToString(BitConverter.GetBytes(utility.ReverseEndian(global.activeVault.luaStrings[i].hash))).Replace("-", ""); ;
+                        luaStringsForExport[i] = BitConverter.ToString(BitConverter.GetBytes(Utility.ReverseEndian(global.activeVault.luaStrings[i].hash))).Replace("-", ""); ;
                         luaStringsForExport[i] += " " + global.activeVault.luaStrings[i].name;
                     }
 
@@ -750,7 +750,7 @@ namespace MorcuTool
             using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
             {
 
-                uint sig = utility.ReverseEndian(reader.ReadUInt32());
+                uint sig = Utility.ReverseEndian(reader.ReadUInt32());
 
                 if (sig != 0x030502ED && sig != 0x03051771)
                 {
@@ -758,12 +758,12 @@ namespace MorcuTool
                     return;
                 }
 
-                uint fileversion = utility.ReverseEndian(reader.ReadUInt32());
+                uint fileversion = Utility.ReverseEndian(reader.ReadUInt32());
 
                 reader.BaseStream.Position += 0x04;
 
-                ushort unknown1 = utility.ReverseEndianShort(reader.ReadUInt16());
-                ushort numberoffiles = utility.ReverseEndianShort(reader.ReadUInt16());     //maybe???
+                ushort unknown1 = Utility.ReverseEndianShort(reader.ReadUInt16());
+                ushort numberoffiles = Utility.ReverseEndianShort(reader.ReadUInt16());     //maybe???
 
                 reader.BaseStream.Position += 0x30;
 
@@ -772,8 +772,8 @@ namespace MorcuTool
 
                 for (uint i = 0; i < 110; i++)
                 {
-                    uint count = utility.ReverseEndian(reader.ReadUInt32());
-                    uint offset = utility.ReverseEndian(reader.ReadUInt32());
+                    uint count = Utility.ReverseEndian(reader.ReadUInt32());
+                    uint offset = Utility.ReverseEndian(reader.ReadUInt32());
 
                     if (offset != 0xFFFFFFFF)
                     {
@@ -792,8 +792,8 @@ namespace MorcuTool
 
                     for (int i = 0; i < chunklist[offset]; i++)     //for each item in the chunk
                     {
-                        uint fileID = utility.ReverseEndian(reader.ReadUInt32());
-                        uint fileoffset = utility.ReverseEndian(reader.ReadUInt32());
+                        uint fileID = Utility.ReverseEndian(reader.ReadUInt32());
+                        uint fileoffset = Utility.ReverseEndian(reader.ReadUInt32());
 
                         IDsandoffsets.Add(fileID, fileoffset + 0x10);  //and the ID and offset of the file to the dictionary
                         offsets.Add(fileoffset + 0x10); // just so that we can reference which one comes after etc.
@@ -890,7 +890,7 @@ namespace MorcuTool
         public uint ReverseEndianIfNeeded(uint input) { 
         if (packageType == PackageType.Agents)
             {
-            input = utility.ReverseEndian(input);
+            input = Utility.ReverseEndian(input);
             }
             return input;
         }
@@ -921,7 +921,7 @@ namespace MorcuTool
 
             //offset 0x04
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(packageVersion));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(packageVersion));
 
             //offset 0x08
 
@@ -941,12 +941,12 @@ namespace MorcuTool
                 }
             else if (packageType == PackageType.Agents)
                 {
-                utility.AddLongToList(output, utility.ReverseEndianLong(DateTime.Now.ToBinary()));
+                Utility.AddLongToList(output, Utility.ReverseEndianLong(DateTime.Now.ToBinary()));
                 }
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexmajorversion));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(indexmajorversion));
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded((uint)subfiles.Count));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded((uint)subfiles.Count));
 
             //offset 0x28
 
@@ -959,25 +959,25 @@ namespace MorcuTool
                 }
             else if (packageType == PackageType.Agents)
                 {
-                utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));       //this will be returned to later once we know what it is
+                Utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));       //this will be returned to later once we know what it is
                 }
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexsize));        //this will be returned to later once we know what it is
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(holeentrycount));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(holeoffset));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(holesize));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexminorversion));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(indexsize));        //this will be returned to later once we know what it is
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(holeentrycount));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(holeoffset));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(holesize));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(indexminorversion));
 
             if (packageType == PackageType.Agents)
                 {
-                utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown4));
+                Utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown4));
                 }
 
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));   //this will be returned to later once we know what it is
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown5));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown6));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved1));
-            utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved2));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(indexoffset));   //this will be returned to later once we know what it is
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown5));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(unknown6));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved1));
+            Utility.AddUIntToList(output, ReverseEndianIfNeeded(reserved2));
 
             while (output.Count < 0x60)
                 {
@@ -1038,7 +1038,8 @@ namespace MorcuTool
                     {
                     if (subfiles[f].has_been_decompressed)  //if it was decompressed by the user then compress it
                         {
-                        subfiles[f].filebytes = utility.Compress_QFS(filebytes);
+                        MessageBox.Show("Because you modified a compressed file, it needs to be recompressed. This feature is currently not implemented! The package saving will therefore fail.");
+                        subfiles[f].filebytes = Utility.Compress_QFS(filebytes);
                         }
                     }
 
@@ -1071,34 +1072,34 @@ namespace MorcuTool
 
             if (packageType == PackageType.Agents)
                 {
-                utility.AddULongToList(output,utility.ReverseEndianULong((ulong)indexEntriesForWriting.Count));
+                Utility.AddULongToList(output,Utility.ReverseEndianULong((ulong)indexEntriesForWriting.Count));
 
                 for (int i = 0; i < indexEntriesForWriting.Count; i++)  //a bunch of entries that describe how many files there are of each type
                     {
-                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].typeID));
-                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].groupID));
-                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].typeNumberOfInstances));
-                    utility.AddUIntToList(output, utility.ReverseEndian(indexEntriesForWriting[i].indexnulls));
+                    Utility.AddUIntToList(output, Utility.ReverseEndian(indexEntriesForWriting[i].typeID));
+                    Utility.AddUIntToList(output, Utility.ReverseEndian(indexEntriesForWriting[i].groupID));
+                    Utility.AddUIntToList(output, Utility.ReverseEndian(indexEntriesForWriting[i].typeNumberOfInstances));
+                    Utility.AddUIntToList(output, Utility.ReverseEndian(indexEntriesForWriting[i].indexnulls));
                     }
 
                 for (int i = 0; i < subfiles.Count; i++)     //go through the files and add them to the index list. They are organised by type, one type after the other. (So X number of type A, as described above, then Y number of type B...) Within a type, they are organised by hash
                     {
-                    utility.AddULongToList(output, utility.ReverseEndianULong(subfiles[i].hash));
-                    utility.AddIntToList(output, utility.ReverseEndianSigned(subfileOffsets[i]));
-                    utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].filesize));
+                    Utility.AddULongToList(output, Utility.ReverseEndianULong(subfiles[i].hash));
+                    Utility.AddIntToList(output, Utility.ReverseEndianSigned(subfileOffsets[i]));
+                    Utility.AddUIntToList(output, Utility.ReverseEndian(subfiles[i].filesize));
 
                     // this line is probably only required in MSK     utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].typeID));
                     // this line is probably only required in MSK     utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].groupID));
 
                     if (TypeIDsThatRequireCompression.Contains(subfiles[i].typeID))
                         {
-                        utility.AddUIntToList(output, utility.ReverseEndian(subfiles[i].uncompressedsize));
+                        Utility.AddUIntToList(output, Utility.ReverseEndian(subfiles[i].uncompressedsize));
                         }
                     }
 
-                utility.OverWriteUIntInList(output, 0x28, ReverseEndianIfNeeded(newIndexOffset));
-                utility.OverWriteUIntInList(output, 0x2C, ReverseEndianIfNeeded((uint)(output.Count - newIndexOffset)));     
-                utility.OverWriteUIntInList(output, 0x44, ReverseEndianIfNeeded(newIndexOffset));      
+                Utility.OverWriteUIntInList(output, 0x28, ReverseEndianIfNeeded(newIndexOffset));
+                Utility.OverWriteUIntInList(output, 0x2C, ReverseEndianIfNeeded((uint)(output.Count - newIndexOffset)));     
+                Utility.OverWriteUIntInList(output, 0x44, ReverseEndianIfNeeded(newIndexOffset));      
                 }
             else 
                 {

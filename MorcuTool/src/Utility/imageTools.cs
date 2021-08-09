@@ -62,7 +62,7 @@ namespace MorcuTool
 
                 int pos = 0;
 
-                if (global.activePackage.packageType == Package.PackageType.SkyHeroes && utility.ReverseEndian(BitConverter.ToUInt32(file,pos)) != 0)        //skip those annoying extra headers from MySims SkyHeroes
+                if (global.activePackage.packageType == Package.PackageType.SkyHeroes && Utility.ReverseEndian(BitConverter.ToUInt32(file,pos)) != 0)        //skip those annoying extra headers from MySims SkyHeroes
                 {
                     startoffile = 0x50;
                 }
@@ -71,23 +71,23 @@ namespace MorcuTool
 
             if (global.activePackage.packageType == Package.PackageType.Agents || global.activePackage.packageType == Package.PackageType.Kingdom)
                 {
-                    magic = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    magic = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                     pos+=4;
-                    flags = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    flags = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                     pos+=4;
 
                     if (version == 1)   //MYSIMS
                         {
                         pos = 0x1C;
 
-                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        width = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 2;
-                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        height = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 5;
 
                         imageformat = file[pos];
                         pos++;
-                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        imagecount = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                         pos += 4;
 
                         pos += 0x14;
@@ -101,14 +101,14 @@ namespace MorcuTool
                         {
                         pos = 0x1C;
 
-                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        width = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 2;
-                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        height = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 5;
 
                         imageformat = file[pos];
                         pos++;
-                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        imagecount = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                         pos += 4;
 
                         pos += 0x14;
@@ -120,40 +120,40 @@ namespace MorcuTool
                         }
                     else if (version == 3)   //MYSIMS KINGDOM AND AGENTS
                         {
-                        imagesize = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        imagesize = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                         pos += 4;
 
                         pos += 0x0C;
 
-                        width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        width = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 2;
-                        height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                        height = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                         pos += 5;
 
                         imageformat = file[pos];
                         pos ++;
-                        imagecount = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                        imagecount = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                         pos += 4;
 
                         pos += 0x14;
 
-                        imageoffset = utility.ReverseEndianSigned(BitConverter.ToInt32(file, pos));
+                        imageoffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(file, pos));
                         pos += 4;
                         }
                 }
                 else if (global.activePackage.packageType == Package.PackageType.SkyHeroes)
                 {
-                    magic = utility.ReverseEndian(BitConverter.ToUInt32(file,pos));
+                    magic = Utility.ReverseEndian(BitConverter.ToUInt32(file,pos));
                     pos += 4;
-                    flags = utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
+                    flags = Utility.ReverseEndian(BitConverter.ToUInt32(file, pos));
                     pos += 4;
 
                     pos += 6;
-                    width = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                    width = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
                     pos += 2;
 
                     pos += 2;
-                    height = utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
+                    height = Utility.ReverseEndianShort(BitConverter.ToUInt16(file, pos));
 
                     pos += 0x2D;
 
@@ -177,35 +177,35 @@ namespace MorcuTool
 
                 //create tpl file byte array
 
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x0020AF30)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000001)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x0000000C)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000014)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndianShort(height)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndianShort(width)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x0020AF30)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000001)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x0000000C)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000014)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndianShort(height)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndianShort(width)));
                 output.Add(0x00);
                 output.Add(0x00);
                 output.Add(0x00);
                 output.Add(imageformat);
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000060)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000001)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000001)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000060)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000001)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000001)));
 
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
-                output.AddRange(BitConverter.GetBytes(utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
+                output.AddRange(BitConverter.GetBytes(Utility.ReverseEndian(0x00000000)));
 
                 output.AddRange(imageData);
 
@@ -239,23 +239,23 @@ namespace MorcuTool
 
                 reader.BaseStream.Position = startoffile;
 
-                magic = utility.ReverseEndian(reader.ReadUInt32());
-                numberofimages = utility.ReverseEndian(reader.ReadUInt32());
-                imagetableoffset = utility.ReverseEndian(reader.ReadUInt32());
+                magic = Utility.ReverseEndian(reader.ReadUInt32());
+                numberofimages = Utility.ReverseEndian(reader.ReadUInt32());
+                imagetableoffset = Utility.ReverseEndian(reader.ReadUInt32());
 
-                imageheaderoffset = utility.ReverseEndian(reader.ReadUInt32());
-                paletteheaderoffset = utility.ReverseEndian(reader.ReadUInt32());
+                imageheaderoffset = Utility.ReverseEndian(reader.ReadUInt32());
+                paletteheaderoffset = Utility.ReverseEndian(reader.ReadUInt32());
 
                 reader.BaseStream.Position = startoffile + imageheaderoffset;
 
-                height = utility.ReverseEndianShort(reader.ReadUInt16());
-                width = utility.ReverseEndianShort(reader.ReadUInt16());
-                imageformat = utility.ReverseEndian(reader.ReadUInt32());
-                imagedataoffset = utility.ReverseEndian(reader.ReadUInt32());
-                wrapS = utility.ReverseEndian(reader.ReadUInt32());
-                wrapT = utility.ReverseEndian(reader.ReadUInt32());
-                minfilter = utility.ReverseEndian(reader.ReadUInt32());
-                magfilter = utility.ReverseEndian(reader.ReadUInt32());
+                height = Utility.ReverseEndianShort(reader.ReadUInt16());
+                width = Utility.ReverseEndianShort(reader.ReadUInt16());
+                imageformat = Utility.ReverseEndian(reader.ReadUInt32());
+                imagedataoffset = Utility.ReverseEndian(reader.ReadUInt32());
+                wrapS = Utility.ReverseEndian(reader.ReadUInt32());
+                wrapT = Utility.ReverseEndian(reader.ReadUInt32());
+                minfilter = Utility.ReverseEndian(reader.ReadUInt32());
+                magfilter = Utility.ReverseEndian(reader.ReadUInt32());
 
 
 
@@ -272,28 +272,28 @@ namespace MorcuTool
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filename + "2.tpl", FileMode.Create)))
                 {
 
-                    writer.Write(utility.ReverseEndian(0x14FE0149));
-                    writer.Write(utility.ReverseEndian(0x00030000));
-                    writer.Write(utility.ReverseEndian((uint)(reader.BaseStream.Length - imagedataoffset)));
+                    writer.Write(Utility.ReverseEndian(0x14FE0149));
+                    writer.Write(Utility.ReverseEndian(0x00030000));
+                    writer.Write(Utility.ReverseEndian((uint)(reader.BaseStream.Length - imagedataoffset)));
 
                     writer.Write(0);
                     writer.Write(0);
                     writer.Write(0);
 
-                    writer.Write(utility.ReverseEndianShort(width));
-                    writer.Write(utility.ReverseEndianShort(height));
+                    writer.Write(Utility.ReverseEndianShort(width));
+                    writer.Write(Utility.ReverseEndianShort(height));
 
-                    writer.Write(utility.ReverseEndian(imageformat));
+                    writer.Write(Utility.ReverseEndian(imageformat));
 
 
                     writer.Write(0);
                     writer.Write(0);
-                    writer.Write(utility.ReverseEndian(1));
-                    writer.Write(utility.ReverseEndian(1));
+                    writer.Write(Utility.ReverseEndian(1));
+                    writer.Write(Utility.ReverseEndian(1));
                     writer.Write(0);
                     writer.Write(0);
-                    writer.Write(utility.ReverseEndian(0x40));
-                    writer.Write(utility.ReverseEndian((uint)(reader.BaseStream.Length - imagedataoffset)));
+                    writer.Write(Utility.ReverseEndian(0x40));
+                    writer.Write(Utility.ReverseEndian((uint)(reader.BaseStream.Length - imagedataoffset)));
 
 
                     for (int i = 0; i < ((reader.BaseStream.Length - imagedataoffset) / 8); i++)

@@ -79,19 +79,19 @@ namespace MorcuTool
 
                 pos = offset + 0x14;    //skips over 4-byte magic 0x000000FF
 
-                sectionOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                sectionOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                endOfClassTableOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                endOfClassTableOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val2 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val2 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val3 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val3 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val4 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val4 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val5 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val5 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val6 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val6 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
 
                 //now actually read the entries
@@ -167,19 +167,19 @@ namespace MorcuTool
 
                 pos = offset + 0x14;    //skips over 4-byte magic 0x000000FF
 
-                sectionOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                sectionOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                localFixupTableOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                localFixupTableOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                globalFixupTableOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                globalFixupTableOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                virtualFixupTableOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                virtualFixupTableOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val4 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val4 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val5 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val5 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
-                val6 = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                val6 = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 pos += 4;
 
                 //now actually read the sections
@@ -207,10 +207,10 @@ namespace MorcuTool
 
                 public hkxVirtualFixupEntry(Subfile basis, int pos)
                 {
-                    objectOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                    objectOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                     pos += 4;
                     pos += 4; //skip unk, always 0?
-                    classOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                    classOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 }
             }
 
@@ -221,9 +221,9 @@ namespace MorcuTool
 
                 public hkxLocalFixupEntry(Subfile basis, int pos)
                 {
-                    destOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                    destOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                     pos += 4;
-                    srcOffset = utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
+                    srcOffset = Utility.ReverseEndianSigned(BitConverter.ToInt32(basis.filebytes, pos));
                 }
             }
         }
@@ -272,7 +272,7 @@ namespace MorcuTool
                             Console.WriteLine("vert count: " + newSimpleMeshShape.vertices.Count);
 
                             foreach (Vertex v in newSimpleMeshShape.vertices) {
-                                obj.Add("v " + v.X + " " + v.Y + " " + v.Z);
+                                obj.Add("v " + v.position.x + " " + v.position.y + " " + v.position.z);
                             }
 
                             foreach (hkSimpleMeshShapeTriangle f in newSimpleMeshShape.triangles)

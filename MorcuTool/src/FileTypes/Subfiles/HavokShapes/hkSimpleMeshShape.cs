@@ -31,7 +31,7 @@ namespace MorcuTool
             triangles = havokUtility.ParseHkTriangleArray(basis, objectOffset + 32);
             materialIndices = havokUtility.ParseHkIntArray(basis, objectOffset + 44);
 
-            radius = utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 56));
+            radius = Utility.ReverseEndianSingle(BitConverter.ToSingle(basis.filebytes, objectOffset + 56));
         }
     }
 }

@@ -60,19 +60,19 @@ namespace MorcuTool
                 return;
             }
 
-            int meshDataOffset = utility.ReadInt32BigEndian(basis.filebytes, 0x14);
+            int meshDataOffset = Utility.ReadInt32BigEndian(basis.filebytes, 0x14);
 
             int pos = meshDataOffset + 0x08;
-            int offsetOfEndOfMeshData = meshDataOffset + utility.ReadInt32BigEndian(basis.filebytes, pos);
+            int offsetOfEndOfMeshData = meshDataOffset + Utility.ReadInt32BigEndian(basis.filebytes, pos);
 
             pos = meshDataOffset + 0x10;
-            int sectionCount = utility.ReadInt32BigEndian(basis.filebytes, pos);
+            int sectionCount = Utility.ReadInt32BigEndian(basis.filebytes, pos);
             pos += 4;
 
             int[] sectionOffsets = new int[sectionCount];
 
             for (int i = 0; i < sectionCount; i++) { 
-            sectionOffsets[i] = meshDataOffset + utility.ReadInt32BigEndian(basis.filebytes, pos + (i * 4));
+            sectionOffsets[i] = meshDataOffset + Utility.ReadInt32BigEndian(basis.filebytes, pos + (i * 4));
             }
 
             //section 0 is some other data, the rest are vertex data seemingly
@@ -90,41 +90,41 @@ namespace MorcuTool
                 obj.Add("o object" + i);
                 pos = sectionOffsets[i];
 
-                float UnkMultiplier = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float UnkMultiplier = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4; 
-                float xUnk = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float xUnk = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
-                float yUnk = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float yUnk = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
-                float zUnk = utility.ReadSingleBigEndian(basis.filebytes, pos);
-                pos += 4;
-                
-
-                float Unk2Multiplier = utility.ReadSingleBigEndian(basis.filebytes, pos);
-                pos += 4;
-                float xUnk2 = utility.ReadSingleBigEndian(basis.filebytes, pos);
-                pos += 4;
-                float yUnk2 = utility.ReadSingleBigEndian(basis.filebytes, pos);
-                pos += 4;
-                float zUnk2 = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float zUnk = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
                 
 
-                float nudgeMultiplier = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float Unk2Multiplier = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
-                float xNudge = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float xUnk2 = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
-                float yNudge = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float yUnk2 = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
-                float zNudge = utility.ReadSingleBigEndian(basis.filebytes, pos);
+                float zUnk2 = Utility.ReadSingleBigEndian(basis.filebytes, pos);
+                pos += 4;
+                
+
+                float nudgeMultiplier = Utility.ReadSingleBigEndian(basis.filebytes, pos);
+                pos += 4;
+                float xNudge = Utility.ReadSingleBigEndian(basis.filebytes, pos);
+                pos += 4;
+                float yNudge = Utility.ReadSingleBigEndian(basis.filebytes, pos);
+                pos += 4;
+                float zNudge = Utility.ReadSingleBigEndian(basis.filebytes, pos);
                 pos += 4;
 
                 pos += 12;
 
 
-                while (pos < basis.filebytes.Length && utility.ReadInt32BigEndian(basis.filebytes, pos) != 1) {
+                while (pos < basis.filebytes.Length && Utility.ReadInt32BigEndian(basis.filebytes, pos) != 1) {
 
-                    int chunkType = utility.ReadInt32BigEndian(basis.filebytes, pos);
+                    int chunkType = Utility.ReadInt32BigEndian(basis.filebytes, pos);
                     pos += 4;
 
                     Console.WriteLine("MSA collision chunk " + chunkType + " at "+ pos);
@@ -132,7 +132,7 @@ namespace MorcuTool
 
                         case 0x04:
                             //extents X Y Z of collision box
-                            vertices.Add(new Vertex(utility.ReadSingleBigEndian(basis.filebytes, pos), utility.ReadSingleBigEndian(basis.filebytes, pos + 4), utility.ReadSingleBigEndian(basis.filebytes, pos + 8)));  
+                            vertices.Add(new Vertex(Utility.ReadSingleBigEndian(basis.filebytes, pos), Utility.ReadSingleBigEndian(basis.filebytes, pos + 4), Utility.ReadSingleBigEndian(basis.filebytes, pos + 8)));  
                             pos += 12;
                             pos += 12; //seems to be a hash of a lua attribute or two? Possibly giving a name to this particular bit of collision. No obvious effects when nulled out (although there might be if the object is required by a lua script)
                             break;
@@ -145,7 +145,7 @@ namespace MorcuTool
 
                 foreach (Vertex v in vertices) {
 
-                    obj.Add("v "+v.X+" "+v.Y+" "+v.Z);
+                    obj.Add("v "+v.position.x+" "+v.position.y+" "+v.position.z);
                 }
 
                 vertices.Clear();
