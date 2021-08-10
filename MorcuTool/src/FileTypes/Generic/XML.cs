@@ -149,7 +149,33 @@ namespace MorcuTool
 
             public XMLtag(string _params, XMLtag _parent)
             {
-                string[] rawParams = _params.Split(' ');
+				bool withinQuotationMarks = false;
+        	
+				int previousSplitPosition = 0;
+				
+				List<string> rawParams = new List<string>();
+				
+				for(int i = 0; i < _params.Length; i++) {
+					
+					if (_params[i] == '\"' && !(i > 0 && _params[i-1] == '\\')){
+						withinQuotationMarks = !withinQuotationMarks;
+						}
+					
+					if (!withinQuotationMarks && _params[i] == ' ') {
+						rawParams.Add(_params.Substring(previousSplitPosition,i-previousSplitPosition));
+						previousSplitPosition = i;
+					}
+				}
+
+				rawParams.Add(_params.Substring(previousSplitPosition,_params.Length-previousSplitPosition)); //because otherwise the last one wouldn't be caught
+				
+				for (int i = rawParams.Count - 1; i >= 0; i--) {
+					
+					if (rawParams[i].Trim() == "") {
+						rawParams.RemoveAt(i);
+					}        		
+				}
+				
                 name = rawParams[0];
 
                 parent = _parent;
@@ -161,11 +187,11 @@ namespace MorcuTool
                     Console.WriteLine("new tag: " + name + " at the root level");
                 }*/
 
-                myParams = new ParamKeyValuePair[rawParams.Length - 1];
+                myParams = new ParamKeyValuePair[rawParams.Count - 1];
 
-                for (int i = 1; i < rawParams.Length; i++) {
+                for (int i = 1; i < rawParams.Count; i++) {
                     myParams[i - 1] = new ParamKeyValuePair(rawParams[i]);
-                    //Console.WriteLine(myParams[i - 1]);
+                    Console.WriteLine(myParams[i - 1].key);
                 }
             }
 
