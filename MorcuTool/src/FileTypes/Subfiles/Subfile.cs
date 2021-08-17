@@ -39,6 +39,7 @@ namespace MorcuTool
         public MaterialSet mtst; //if needed
         public MaterialData matd; //if needed
         public TPLtexture tpl; //if needed
+        public MsaAnimation msaAnim; //if needed
 
         public void Load()
         {
@@ -84,6 +85,9 @@ namespace MorcuTool
                     case global.TypeID.TPL_MSK:
                     case global.TypeID.TPL_MSA:
                         tpl = new TPLtexture(this);
+                        break;
+                    case global.TypeID.ANIMCLIP_MSA:
+                        msaAnim = new MsaAnimation(this);
                         break;
                 }
             }

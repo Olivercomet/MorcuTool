@@ -1037,9 +1037,8 @@ namespace MorcuTool
                 if (subfiles[f].should_be_compressed_when_in_package)
                     {
                     if (subfiles[f].has_been_decompressed)  //if it was decompressed by the user then compress it
-                        {
-                        MessageBox.Show("Because you modified a compressed file, it needs to be recompressed. This feature is currently not implemented! The package saving will therefore fail.");
-                        subfiles[f].filebytes = Utility.Compress_QFS(filebytes);
+                        {                        
+                        subfiles[f].filebytes = Utility.Compress_QFS(subfiles[f].filebytes);
                         }
                     }
 
@@ -1053,10 +1052,10 @@ namespace MorcuTool
                 else //if it was modified or read, use the bytes from its filebytes array
                     {
                     subfiles[f].filesize = (uint)subfiles[f].filebytes.Length;
+                    Console.WriteLine("LENGTH BEING ADDED IS: "+subfiles[f].filesize);
                     for (int i = 0; i < subfiles[f].filebytes.Length; i++)
                         {
                         output.Add(subfiles[f].filebytes[i]);
-                        MessageBox.Show("Need to ensure that the file is compressed if it needs to be");
                         }
                     }
 
@@ -1107,16 +1106,14 @@ namespace MorcuTool
                 
                 }
 
-            File.WriteAllBytes("test.package", output.ToArray());
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Title = "Save new package";
+            saveFileDialog1.Filter = ".package files (*.package)|*.package";
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
+                File.WriteAllBytes(saveFileDialog1.FileName, output.ToArray());
+            }
         }
-
-
-
-
-
-
-
-
     }
 
     public class IndexEntry

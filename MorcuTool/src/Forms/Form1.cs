@@ -19,6 +19,9 @@ namespace MorcuTool
         public Dictionary<TreeNode, Subfile> treeNodesAndSubfiles = new Dictionary<TreeNode, Subfile>();
 
 
+        //bone names that have had their FNV-1 32bit hashes identified in model/animation files
+        public string[] commonBoneNames = new string[] { "pelvis", "root", "spine0","spine1","spine2", "neck", "head", "l_ankle","r_ankle"};
+
         public Form1()
         {
             InitializeComponent();
@@ -540,7 +543,7 @@ namespace MorcuTool
             {
                 foreach (string filename in openFileDialog2.FileNames)
                 {
-                    File.WriteAllBytes(filename+"decomp" , Utility.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
+                    File.WriteAllBytes(filename+"_decomp" , Utility.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
                 }
             }
         }
@@ -753,12 +756,7 @@ namespace MorcuTool
 
         }
 
-        private void backtrackToModel_Click(object sender, EventArgs e)
-        {
-            Subfile s = treeNodesAndSubfiles[FileTree.SelectedNode];
-            s.Load();
-            backtrackSubfile(s);
-        }
+
 
         public void backtrackSubfile(Subfile s) {
 
@@ -868,6 +866,48 @@ namespace MorcuTool
                     break;
             }
 
+        }
+
+        private void compressToQFSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog2 = new OpenFileDialog();
+
+            openFileDialog2.Title = "Select file to QFS compress";
+            openFileDialog2.CheckFileExists = true;
+            openFileDialog2.CheckPathExists = true;
+
+            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                foreach (string filename in openFileDialog2.FileNames)
+                {
+                    File.WriteAllBytes(filename + "_comp", Utility.Compress_QFS(File.ReadAllBytes(filename)));
+                }
+            }
+        }
+
+        private void backtrackToModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Subfile s = treeNodesAndSubfiles[FileTree.SelectedNode];
+            s.Load();
+            backtrackSubfile(s);
+        }
+
+        private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            Subfile s = treeNodesAndSubfiles[FileTree.SelectedNode];
+            s.Load();
+
+            openFileDialog1.Title = "Replace "+ s.filename;
+            openFileDialog1.Filter = "All files (*.*)|*.*";
+            openFileDialog1.CheckFileExists = true;
+            openFileDialog1.CheckPathExists = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                s.filebytes = File.ReadAllBytes(openFileDialog1.FileName);
+            }
         }
     }
 }

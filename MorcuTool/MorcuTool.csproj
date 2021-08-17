@@ -52,6 +52,7 @@
     <Compile Include="src\FileTypes\Model\DAEModel.cs" />
     <Compile Include="src\FileTypes\Model\RevoModel.cs" />
     <Compile Include="src\FileTypes\Generic\XML.cs" />
+    <Compile Include="src\FileTypes\Subfiles\MsaAnimation.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\havokObject.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkArray.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkSimpleMeshShapeTriangle.cs" />

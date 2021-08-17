@@ -40,7 +40,7 @@ namespace MorcuTool
         BUILDABLEREGION_MSA = 0x41C4A8EF,
         BUILDABLEREGION_MSK = 0xC84ACD30,
         LLMF_MSK = 0x58969018,      //"LevelData"
-        LLMF_MSA = 0xA5DCD485,
+        LLMF_MSA = 0xA5DCD485,      //(FNV-1 32bit hash of "level")
         RIG_MSK = 0x8EAF13DE,     //"RigData"   based on granny3D seemingly
         RIG_MSA = 0x4672E5BD,     //Interesting granny struct info at 0x49CFDD in MSA's main.dol
         ANIMCLIP_MSK =0x6B20C4F3,   //"ClipData"

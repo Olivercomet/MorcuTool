@@ -40,10 +40,13 @@
             this.loadVaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compressionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decompressQFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compressToQFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.morcubusModeBox = new System.Windows.Forms.CheckBox();
             this.FileTree = new System.Windows.Forms.TreeView();
             this.subfileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportSubfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backtrackToModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageRootContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportAllContextMenuStripButton = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
@@ -53,7 +56,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.vaultSearchTextBox = new System.Windows.Forms.TextBox();
             this.hashLabel = new System.Windows.Forms.Label();
-            this.backtrackToModel = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.subfileContextMenu.SuspendLayout();
             this.packageRootContextMenu.SuspendLayout();
@@ -137,7 +139,8 @@
             // compressionToolStripMenuItem
             // 
             this.compressionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.decompressQFSToolStripMenuItem});
+            this.decompressQFSToolStripMenuItem,
+            this.compressToQFSToolStripMenuItem});
             this.compressionToolStripMenuItem.Name = "compressionToolStripMenuItem";
             this.compressionToolStripMenuItem.Size = new System.Drawing.Size(227, 26);
             this.compressionToolStripMenuItem.Text = "Compression";
@@ -145,9 +148,16 @@
             // decompressQFSToolStripMenuItem
             // 
             this.decompressQFSToolStripMenuItem.Name = "decompressQFSToolStripMenuItem";
-            this.decompressQFSToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.decompressQFSToolStripMenuItem.Size = new System.Drawing.Size(205, 26);
             this.decompressQFSToolStripMenuItem.Text = "Decompress QFS";
             this.decompressQFSToolStripMenuItem.Click += new System.EventHandler(this.decompressQFSToolStripMenuItem_Click_1);
+            // 
+            // compressToQFSToolStripMenuItem
+            // 
+            this.compressToQFSToolStripMenuItem.Name = "compressToQFSToolStripMenuItem";
+            this.compressToQFSToolStripMenuItem.Size = new System.Drawing.Size(205, 26);
+            this.compressToQFSToolStripMenuItem.Text = "Compress to QFS";
+            this.compressToQFSToolStripMenuItem.Click += new System.EventHandler(this.compressToQFSToolStripMenuItem_Click);
             // 
             // morcubusModeBox
             // 
@@ -171,16 +181,31 @@
             this.subfileContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.subfileContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportSubfile,
-            this.backtrackToModel});
+            this.replaceToolStripMenuItem,
+            this.backtrackToModelToolStripMenuItem});
             this.subfileContextMenu.Name = "subfileContextMenu";
-            this.subfileContextMenu.Size = new System.Drawing.Size(211, 80);
+            this.subfileContextMenu.Size = new System.Drawing.Size(207, 76);
             // 
             // exportSubfile
             // 
             this.exportSubfile.Name = "exportSubfile";
-            this.exportSubfile.Size = new System.Drawing.Size(210, 24);
+            this.exportSubfile.Size = new System.Drawing.Size(206, 24);
             this.exportSubfile.Text = "Export";
             this.exportSubfile.Click += new System.EventHandler(this.exportSubfile_Click);
+            // 
+            // replaceToolStripMenuItem
+            // 
+            this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.replaceToolStripMenuItem.Text = "Replace";
+            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
+            // 
+            // backtrackToModelToolStripMenuItem
+            // 
+            this.backtrackToModelToolStripMenuItem.Name = "backtrackToModelToolStripMenuItem";
+            this.backtrackToModelToolStripMenuItem.Size = new System.Drawing.Size(206, 24);
+            this.backtrackToModelToolStripMenuItem.Text = "Backtrack to model";
+            this.backtrackToModelToolStripMenuItem.Click += new System.EventHandler(this.backtrackToModelToolStripMenuItem_Click);
             // 
             // packageRootContextMenu
             // 
@@ -259,13 +284,6 @@
             this.hashLabel.Text = "Hash: ";
             this.hashLabel.Click += new System.EventHandler(this.hashLabel_Click);
             // 
-            // backtrackToModel
-            // 
-            this.backtrackToModel.Name = "backtrackToModel";
-            this.backtrackToModel.Size = new System.Drawing.Size(210, 24);
-            this.backtrackToModel.Text = "Backtrack to model";
-            this.backtrackToModel.Click += new System.EventHandler(this.backtrackToModel_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -320,7 +338,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox vaultSearchTextBox;
         private System.Windows.Forms.Label hashLabel;
-        private System.Windows.Forms.ToolStripMenuItem backtrackToModel;
+        private System.Windows.Forms.ToolStripMenuItem compressToQFSToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backtrackToModelToolStripMenuItem;
     }
 }
 
