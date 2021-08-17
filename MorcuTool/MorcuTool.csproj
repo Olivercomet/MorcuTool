@@ -52,6 +52,7 @@
     <Compile Include="src\FileTypes\Model\DAEModel.cs" />
     <Compile Include="src\FileTypes\Model\RevoModel.cs" />
     <Compile Include="src\FileTypes\Generic\XML.cs" />
+    <Compile Include="src\FileTypes\Subfiles\DS\MSG.cs" />
     <Compile Include="src\FileTypes\Subfiles\MsaAnimation.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\havokObject.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\hkArray.cs" />
@@ -64,6 +65,12 @@
     <Compile Include="src\FileTypes\Subfiles\MaterialSet.cs" />
     <Compile Include="src\FileTypes\Subfiles\MsaCollision.cs" />
     <Compile Include="src\FileTypes\Subfiles\TPLtexture.cs" />
+    <Compile Include="src\Forms\MSGtexteditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MSGtexteditor.Designer.cs">
+      <DependentUpon>MSGtexteditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\Forms\SavePackageForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +85,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="global.cs" />
+    <Compile Include="src\Utility\Compression.cs" />
     <Compile Include="src\Utility\havokUtility.cs" />
     <Compile Include="src\Utility\imageTools.cs" />
     <Compile Include="src\FileTypes\Model\mdlObject.cs" />
@@ -101,6 +109,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="src\Forms\MSGtexteditor.resx">
+      <DependentUpon>MSGtexteditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="src\Forms\SavePackageForm.resx">
       <DependentUpon>SavePackageForm.cs</DependentUpon>
     </EmbeddedResource>

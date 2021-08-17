@@ -13,19 +13,29 @@ namespace MorcuTool
 
             public uint unk1;   //start frame, possibly?
             public uint unk2;   //flags? padding? usually 0
-            public uint unk3;   //u32 end of this frame's data, relative to the unknown section offset. The start of the frame's data is the end of the previous one (or from the unknown section offset if it's the first frame)
+            public uint unk3;   //u32 start of this frame's data, relative to the data section
+            public FrameData frmData;
 
-            public Table1Entry(byte[] filebytes, int offset) {
+            public Table1Entry(byte[] filebytes, int offset, MsaAnimation parent) {
                 unk1 = Utility.ReadUInt32BigEndian(filebytes, offset);
-                unk2 = Utility.ReadUInt32BigEndian(filebytes, offset+4);
-                unk3 = Utility.ReadUInt32BigEndian(filebytes, offset+8);
+                unk2 = Utility.ReadUInt32BigEndian(filebytes, offset + 4);
+                unk3 = Utility.ReadUInt32BigEndian(filebytes, offset + 8);
+                frmData = new FrameData(filebytes, parent.dataSectionOffset + unk3);
             }
         }
+
+
+        public class FrameData {
+
+        public FrameData(byte[] filebytes, uint offset) {
+
+            }
+        } 
 
         public class Table2Entry            //setting table 2's count to 1 doesn't seem to change anything in-game
         { 
             public uint unk1;       // u32 flags? padding? usually 0x00000001
-            public uint unk2;       // u32 offset to something (relative to unknown section 1)
+            public uint unk2;       // u32 offset to something (relative to data section)
             public uint unk3;       // u32 usually 0 ?
             public uint unk4;       // u32 offset to float data for bone movement
 
@@ -85,7 +95,7 @@ namespace MorcuTool
             secondTableCount = Utility.ReadUInt32BigEndian(basis.filebytes, 0x90);
 
             for (int i = 0; i < firstTableCount; i++){
-                table1.Add(new Table1Entry(basis.filebytes, (int)(firstTableOffset + (i * 0x0C))));
+                table1.Add(new Table1Entry(basis.filebytes, (int)(firstTableOffset + (i * 0x0C)),this));
               }
 
             for (int i = 0; i < secondTableCount; i++){

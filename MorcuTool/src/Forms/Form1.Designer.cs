@@ -56,6 +56,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.vaultSearchTextBox = new System.Windows.Forms.TextBox();
             this.hashLabel = new System.Windows.Forms.Label();
+            this.mSGTextEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.subfileContextMenu.SuspendLayout();
             this.packageRootContextMenu.SuspendLayout();
@@ -86,21 +87,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open Package";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // savePackageToolStripMenuItem
             // 
             this.savePackageToolStripMenuItem.Name = "savePackageToolStripMenuItem";
-            this.savePackageToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
+            this.savePackageToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.savePackageToolStripMenuItem.Text = "Save Package";
             this.savePackageToolStripMenuItem.Click += new System.EventHandler(this.savePackageToolStripMenuItem_Click);
             // 
             // convertModelToolStripMenuItem
             // 
             this.convertModelToolStripMenuItem.Name = "convertModelToolStripMenuItem";
-            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(190, 26);
+            this.convertModelToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.convertModelToolStripMenuItem.Text = "Convert Model";
             this.convertModelToolStripMenuItem.Click += new System.EventHandler(this.convertModelToolStripMenuItem_Click);
             // 
@@ -110,7 +111,8 @@
             this.simsTPLToTPLToolStripMenuItem,
             this.tPLToMSATPLToolStripMenuItem,
             this.loadVaultToolStripMenuItem,
-            this.compressionToolStripMenuItem});
+            this.compressionToolStripMenuItem,
+            this.mSGTextEditorToolStripMenuItem});
             this.utilityToolStripMenuItem.Name = "utilityToolStripMenuItem";
             this.utilityToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
             this.utilityToolStripMenuItem.Text = "Utility";
@@ -284,6 +286,13 @@
             this.hashLabel.Text = "Hash: ";
             this.hashLabel.Click += new System.EventHandler(this.hashLabel_Click);
             // 
+            // mSGTextEditorToolStripMenuItem
+            // 
+            this.mSGTextEditorToolStripMenuItem.Name = "mSGTextEditorToolStripMenuItem";
+            this.mSGTextEditorToolStripMenuItem.Size = new System.Drawing.Size(227, 26);
+            this.mSGTextEditorToolStripMenuItem.Text = "MSG text editor";
+            this.mSGTextEditorToolStripMenuItem.Click += new System.EventHandler(this.mSGTextEditorToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -341,6 +350,7 @@
         private System.Windows.Forms.ToolStripMenuItem compressToQFSToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem backtrackToModelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mSGTextEditorToolStripMenuItem;
     }
 }
 

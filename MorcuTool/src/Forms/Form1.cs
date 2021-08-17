@@ -543,7 +543,7 @@ namespace MorcuTool
             {
                 foreach (string filename in openFileDialog2.FileNames)
                 {
-                    File.WriteAllBytes(filename+"_decomp" , Utility.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
+                    File.WriteAllBytes(filename+"_decomp" , Compression.Decompress_QFS(File.ReadAllBytes(filename)).ToArray());
                 }
             }
         }
@@ -880,7 +880,7 @@ namespace MorcuTool
             {
                 foreach (string filename in openFileDialog2.FileNames)
                 {
-                    File.WriteAllBytes(filename + "_comp", Utility.Compress_QFS(File.ReadAllBytes(filename)));
+                    File.WriteAllBytes(filename + "_comp", Compression.Compress_QFS(File.ReadAllBytes(filename)));
                 }
             }
         }
@@ -908,6 +908,13 @@ namespace MorcuTool
             {
                 s.filebytes = File.ReadAllBytes(openFileDialog1.FileName);
             }
+        }
+
+        private void mSGTextEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MSGtexteditor textEdit = new MSGtexteditor();
+            textEdit.Show();
+
         }
     }
 }

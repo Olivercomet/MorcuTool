@@ -1038,7 +1038,7 @@ namespace MorcuTool
                     {
                     if (subfiles[f].has_been_decompressed)  //if it was decompressed by the user then compress it
                         {                        
-                        subfiles[f].filebytes = Utility.Compress_QFS(subfiles[f].filebytes);
+                        subfiles[f].filebytes = Compression.Compress_QFS(subfiles[f].filebytes);
                         }
                     }
 
