@@ -16,8 +16,8 @@ namespace MorcuTool
             StringBuilder sb = new StringBuilder(input.Length);
 
             foreach (byte b in input) {
-                // sb.Append(Utility.CharFromMSKDSChar(b));
-                Console.WriteLine("Temporarily dummied out");
+               // sb.Append(Utility.CharFromMSKDSChar(b));
+               // temporarily dummmied out
             }
 
             return sb.ToString();        

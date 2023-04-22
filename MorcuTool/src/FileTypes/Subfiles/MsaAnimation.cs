@@ -14,13 +14,15 @@ namespace MorcuTool
             public uint unk1;   //start frame, possibly?
             public uint unk2;   //flags? padding? usually 0
             public uint unk3;   //u32 start of this frame's data, relative to the data section
-            public FrameData frmData;
+            public FrameData frmData1;
+            public FrameData frmData2;
 
             public Table1Entry(byte[] filebytes, int offset, MsaAnimation parent) {
                 unk1 = Utility.ReadUInt32BigEndian(filebytes, offset);
                 unk2 = Utility.ReadUInt32BigEndian(filebytes, offset + 4);
                 unk3 = Utility.ReadUInt32BigEndian(filebytes, offset + 8);
-                frmData = new FrameData(filebytes, parent.dataSectionOffset + unk3);
+                frmData1 = new FrameData(filebytes, parent.dataSectionOffset + unk1);
+                frmData2 = new FrameData(filebytes, parent.dataSectionOffset + unk3);
             }
         }
 
@@ -28,7 +30,7 @@ namespace MorcuTool
         public class FrameData {
 
         public FrameData(byte[] filebytes, uint offset) {
-
+                Console.WriteLine("FrameData type: "+Utility.ReadUInt32BigEndian(filebytes,(int)offset));
             }
         } 
 

@@ -264,6 +264,10 @@ namespace MorcuTool
 
                         reader.BaseStream.Position += 0x10;
 
+                        if (newVertex.UVchannels[0] == null) {
+                            newVertex.UVchannels[0] = new MorcuMath.Vector2();
+                        }
+                        
                         newVertex.UVchannels[0].x = Utility.ReverseEndianSingle(reader.ReadSingle());
                         newVertex.UVchannels[0].y = Utility.ReverseEndianSingle(reader.ReadSingle()) * -1;
 
@@ -500,6 +504,8 @@ namespace MorcuTool
                 openFileDialog2.CheckPathExists = true;
                 openFileDialog2.Multiselect = true;
 
+                bool createdAtLeastOneOBJ = false;
+
                 if (openFileDialog2.ShowDialog() == DialogResult.OK)
                 {
                     foreach (string filename in openFileDialog2.FileNames)
@@ -523,11 +529,12 @@ namespace MorcuTool
                             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                                 {
                                 s.rmdl.GenerateObj(saveFileDialog1.FileName);
+                                createdAtLeastOneOBJ = true;
                                 }
                         }
-                        
                     }
-                }
+                MessageBox.Show("Created .OBJ model(s) in same directory as original file.");
+            }
             
         }
 

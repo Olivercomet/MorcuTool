@@ -645,7 +645,6 @@ namespace MorcuTool
 
                             default:
                                 Console.WriteLine("Unknown type ID " + subfiles[i].typeID);
-                                Console.WriteLine("and this type ID appears " + GetNumOccurrencesOfTypeID(subfiles[i].typeID) + " times in total.");
                                 Console.WriteLine("index of file was " + filesprocessed);
                                 fileextension = "."+subfiles[i].typeID.ToString();
                                 break;
