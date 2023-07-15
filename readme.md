@@ -1,6 +1,6 @@
 ### MorcuTool
 
-A tool that opens MySims series .package archives, which are slightly different to normal Sims archives (for which you may wish to use S3PE or S4PE). 
+A tool that opens MySims series .package archives, which are slightly different to normal package archives (for which you may wish to use S3PE or S4PE). 
 
 It currently supports packages from Kingdom, Agents, and Skyheroes.
 You can then export the individual files stored in the archive. (or, in the case of Skyheroes, it dumps them all automatically)
