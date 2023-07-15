@@ -12,12 +12,20 @@ namespace MorcuTool
 
         public MaterialSet(Subfile basis) {
 
-            int number_of_materials = Utility.ReadInt32BigEndian(basis.filebytes,0x0C);
+            bool useBigEndian = true;
+            int start = 0x00;
 
+            if (basis.filebytes[0] == 0x01) {
+                useBigEndian = false;
+                return; //Processing these MTSTs not yet implemented
+            }
+
+            int number_of_materials = Utility.ReadInt32BigEndian(basis.filebytes, start + 0x0C);
+      
             List<ulong> hashes = new List<ulong>();
 
             for (int i = 0; i < number_of_materials; i++) {
-                hashes.Add(Utility.ReadUInt64BigEndian(basis.filebytes, 0x18 + (i * 8)));
+                hashes.Add(Utility.ReadUInt64BigEndian(basis.filebytes, start + 0x18 + (i * 8)));
             }
 
             foreach (Subfile s in global.activePackage.subfiles) {

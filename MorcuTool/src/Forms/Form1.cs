@@ -685,7 +685,13 @@ namespace MorcuTool
                         was_loaded_already = true;
                     }
 
-                    target.ExportFile(true,Path.Combine(Path.GetDirectoryName(saveFileDialog1.FileName),target.filename));
+                    string newname = target.filename;
+
+                    if (target.rmdl != null) {
+                        newname = target.filename.Replace(".rmdl", ".obj");
+                    }
+
+                    target.ExportFile(true,Path.Combine(Path.GetDirectoryName(saveFileDialog1.FileName),newname));
 
                     if (!was_loaded_already) {
                         target.Unload();

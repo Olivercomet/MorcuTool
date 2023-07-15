@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MorcuTool
 {
@@ -58,6 +59,12 @@ namespace MorcuTool
             {
                 magic = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
+
+                if (magic != 0x14FE0149) {
+                    // That's not actually a TPL image!! It's probably a .DDS, and will be detected and exported as such if the user exports the file.
+                    return;
+                }
+
                 flags = Utility.ReadUInt32BigEndian(basis.filebytes,pos);
                 pos += 4;
 

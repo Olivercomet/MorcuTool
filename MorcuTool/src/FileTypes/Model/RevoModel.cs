@@ -738,7 +738,7 @@ namespace MorcuTool
                         case 3: f.vt4 = Utility.ReadUInt16BigEndian(filebytes, pos); pos += 2; break;
                     }
                     break;
-                case VertexAttributeArrayType.GX_VA_TEX1:
+                case VertexAttributeArrayType.GX_VA_TEX1:                    
                     pos += 2;   //skip for now until multiple UVs are implemented
                     break;
                 case VertexAttributeArrayType.GX_VA_TEX2:

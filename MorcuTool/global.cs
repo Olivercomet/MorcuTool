@@ -16,7 +16,8 @@ namespace MorcuTool
         { 
         
         RMDL_MSK = 0xF9E50586,  //"ModelData"      very accomodating of the gamecube/wii gpu and uses many of its display list conventions
-        RMDL_MSA = 0x2954E734,  
+        RMDL_MSA = 0x2954E734,
+        WMDL_MSPC = 0xB359C791, //WindowsModel instead of RevoModel?
         MATD_MSK = 0x01D0E75D,  //"MaterialData"
         MATD_MSA = 0xE6640542,
         TPL_MSK = 0x00B2D882,   //"TextureData"     very similar to Nintendo tpl (just has a different header)
@@ -67,6 +68,7 @@ namespace MorcuTool
         LIGHTSETXML_MS = 0x50182640,    //Light set XML MySims
         LIGHTSETBIN_MSK = 0x50002128,    //"LightSetData"
         XML_MS = 0xdc37e964,
+        XML2_MS = 0x6d3e3fb4,
         OBJECTCONSTRUCTIONXML_MS = 0xc876c85e,
         OBJECTCONSTRUCTIONBIN_MS = 0xc08ec0ee,
         SLOTXML_MS = 0x4045d294,

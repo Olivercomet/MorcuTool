@@ -59,7 +59,13 @@ namespace MorcuTool
                 switch ((global.TypeID)typeID)
                 {
                     case global.TypeID.HKX_MSK:  //MySims Kingdom HKX 
-                        hkx = new hkxFile(this);
+                        try
+                        {
+                            hkx = new hkxFile(this);
+                        }
+                        catch (Exception e){
+                            hkx = null;
+                        }
                         break;
                     case global.TypeID.COLLISION_MSA:  //MySims Agents mesh collision
                         msaCol = new MsaCollision(this);
@@ -120,8 +126,15 @@ namespace MorcuTool
                 }
                 else if (tpl != null)
                 {
-                    saveFileDialog1.Filter = "PNG image (*.PNG)|*.png|TPL image (*.tpl)|*.tpl";
-                    saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".tpl", ".png");
+                    if (tpl.images.Count == 0)
+                    {
+                        saveFileDialog1.Filter = "DDS image (*.DDS)|*.dds";
+                        saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".tpl", ".dds");
+                    }
+                    else {
+                        saveFileDialog1.Filter = "PNG image (*.PNG)|*.png|TPL image (*.tpl)|*.tpl";
+                        saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".tpl", ".png");
+                    }
                 }
                 else if (typeID == (uint)global.TypeID.LUAC_MSK || typeID == (uint)global.TypeID.LUAC_MSA)
                 {
@@ -161,14 +174,19 @@ namespace MorcuTool
                 }
                 else if (Path.GetExtension(silentPath) == ".png" && (tpl != null))
                 {
-                    if (tpl.images.Count > 1) {
+                    if (tpl.images.Count > 1)
+                    {
                         for (int i = 0; i < tpl.images.Count; i++)
                         {
                             tpl.images[i].Save(silentPath.Replace(".png", "_" + i + ".png"));
                         }
                     }
-                    else {
+                    else if (tpl.images.Count > 0)
+                    {
                         tpl.images[0].Save(silentPath);
+                    }
+                    else {
+                        File.WriteAllBytes(silentPath.Replace(".tpl",".dds").Replace(".png",".dds"), filebytes);
                     }
                 }
                 else if (tpl != null) {

@@ -218,13 +218,14 @@ namespace MorcuTool
 
                             newSubfile.typeID = reader.ReadUInt32();
                             newSubfile.groupID = reader.ReadUInt32();
-                            newSubfile.hash = (ulong)(reader.ReadUInt32()) << 32;
-                            newSubfile.hash |= (ulong)(reader.ReadUInt32());
-
-                            newSubfile.fileoffset = reader.ReadUInt32();
+                            reader.BaseStream.Position += 8;
+                           
+                            newSubfile.fileoffset = reader.ReadUInt32();                            
                             newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
                             newSubfile.uncompressedsize = reader.ReadUInt32();
                             reader.BaseStream.Position += 0x04; //flags
+
+                            newSubfile.hash = (ulong)newSubfile.fileoffset;
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
                             {
@@ -400,6 +401,10 @@ namespace MorcuTool
 
                             case global.TypeID.RMDL_MSK:          //RMDL MSK     
                                 fileextension = ".rmdl";        //          "ModelData"
+                                break;
+
+                            case global.TypeID.WMDL_MSPC:        //WMDL MySims PC
+                                fileextension = ".wmdl";             
                                 break;
 
                             case global.TypeID.MATD_MSA:          //MATD MSA    
@@ -593,6 +598,10 @@ namespace MorcuTool
 
                             case global.TypeID.XML_MS:   //xml
                                 fileextension = ".xml";
+                                break;
+
+                            case global.TypeID.XML2_MS: //another xml
+                                fileextension = ".xml2";
                                 break;
 
                             case global.TypeID.FPST_MS:    //footprint set MySims
