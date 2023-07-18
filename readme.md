@@ -1,12 +1,14 @@
 ### MorcuTool
 
-A tool that opens MySims series .package archives, which are slightly different in format to normal package archives.
-It also has the ability to convert and export the various data files found within (3D models, textures, etc.).
+A tool that opens Maxis .package archives and allows the user to export the files inside, and in some cases convert them to more easily-viewable formats, like OBJ models and PNG images.
+This is particularly for .package versions that are not widely supported elsewhere; i.e. not Sims 3 or Sims 4, which already have their own bespoke programs elsewhere on the internet.
 
-It currently supports packages from MySims, MySims Kingdom, Agents, and Skyheroes.
-You can then export the individual files stored in the archive. (or, in the case of Skyheroes, it dumps them all automatically)
-
-This program is also capable of converting some, but not all Skyheroes character models to .obj.
+MorcuTool currently supports packages from:
+*Spore
+*MySims
+	*Kingdom
+	*Agents
+	*Skyheroes
 
 ### Usage notes
 
