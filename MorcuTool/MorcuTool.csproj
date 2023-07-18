@@ -53,6 +53,7 @@
     <Compile Include="src\FileTypes\Model\DAEModel.cs" />
     <Compile Include="src\FileTypes\Model\RevoModel.cs" />
     <Compile Include="src\FileTypes\Generic\XML.cs" />
+    <Compile Include="src\FileTypes\Model\WindowsModel.cs" />
     <Compile Include="src\FileTypes\Subfiles\DS\MSG.cs" />
     <Compile Include="src\FileTypes\Subfiles\MsaAnimation.cs" />
     <Compile Include="src\FileTypes\Subfiles\HavokShapes\havokObject.cs" />

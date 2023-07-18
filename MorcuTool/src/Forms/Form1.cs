@@ -690,6 +690,10 @@ namespace MorcuTool
                     if (target.rmdl != null) {
                         newname = target.filename.Replace(".rmdl", ".obj");
                     }
+                    if (target.wmdl != null)
+                    {
+                        newname = target.filename.Replace(".wmdl", ".obj");
+                    }
 
                     target.ExportFile(true,Path.Combine(Path.GetDirectoryName(saveFileDialog1.FileName),newname));
 

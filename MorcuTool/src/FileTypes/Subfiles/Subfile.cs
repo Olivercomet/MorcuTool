@@ -40,6 +40,7 @@ namespace MorcuTool
         public MaterialData matd; //if needed
         public TPLtexture tpl; //if needed
         public MsaAnimation msaAnim; //if needed
+        public WindowsModel wmdl; //if needed
 
         public void Load()
         {
@@ -79,6 +80,9 @@ namespace MorcuTool
                     case global.TypeID.RMDL_MSK:          //RMDL MSK   
                     case global.TypeID.RMDL_MSA:          //RMDL MSA     
                         rmdl = new RevoModel(this);
+                        break;
+                    case global.TypeID.WMDL_MSPC:          //WMDL MSPC
+                        wmdl = new WindowsModel(this);
                         break;
                     case global.TypeID.MTST_MSK:          
                     case global.TypeID.MTST_MSA:          
@@ -124,6 +128,11 @@ namespace MorcuTool
                     saveFileDialog1.Filter = "Wavefront OBJ (*.obj)|*.obj|MySims RevoModel (*.rmdl)|*.rmdl";
                     saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".rmdl", ".obj");
                 }
+                else if (wmdl != null)
+                {
+                    saveFileDialog1.Filter = "Wavefront OBJ (*.obj)|*.obj|MySims Windows Model (*.wmdl)|*.wmdl";
+                    saveFileDialog1.FileName = saveFileDialog1.FileName.Replace(".wmdl", ".obj");
+                }
                 else if (tpl != null)
                 {
                     if (tpl.images.Count == 0)
@@ -168,9 +177,16 @@ namespace MorcuTool
 
             if (silentPath != null && silentPath != "")
             {
-                if (Path.GetExtension(silentPath) == ".obj" && (rmdl != null))
+                if (Path.GetExtension(silentPath) == ".obj")
                 {
-                    rmdl.GenerateObj(silentPath);
+                    if (rmdl != null)
+                    {
+                        rmdl.GenerateObj(silentPath);
+                    }
+                    else if (wmdl != null)
+                    {
+                        wmdl.GenerateObj(silentPath);
+                    }
                 }
                 else if (Path.GetExtension(silentPath) == ".png" && (tpl != null))
                 {

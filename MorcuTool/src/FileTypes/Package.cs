@@ -305,9 +305,10 @@ namespace MorcuTool
                             subfiles.Add(newSubfile);
                         }
                     }
-                    else if (MSKindexversion == 4)  
+                    else if (MSKindexversion == 4)             
                     {
                         Console.WriteLine("index version 4");
+                        Console.WriteLine("AS SEEN IN SPORE? I certainly hope it doesn't appear in MSK, because if it does, the extra 4 bytes I'm reading after every entry may not apply!");
                         reader.BaseStream.Position += 4;
                        
                         for (uint i = 0; i < filecount; i++)
@@ -319,7 +320,7 @@ namespace MorcuTool
                             newSubfile.hash |= (ulong)(reader.ReadUInt32());
 
                             newSubfile.fileoffset = reader.ReadUInt32();
-                            newSubfile.filesize = reader.ReadUInt32();
+                            newSubfile.filesize = reader.ReadUInt32() & 0x7FFFFFFF;
                             newSubfile.uncompressedsize = reader.ReadUInt32();
 
                             if (newSubfile.filesize == newSubfile.uncompressedsize)
@@ -330,6 +331,8 @@ namespace MorcuTool
                             {
                                 newSubfile.should_be_compressed_when_in_package = true;
                             }
+
+                            reader.ReadUInt32();        //unknown flags?
 
                             subfiles.Add(newSubfile);
                         }
