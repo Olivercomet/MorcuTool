@@ -7,6 +7,7 @@ This is particularly for .package versions that are not widely supported elsewhe
 MorcuTool currently supports packages from:
 * Spore
 * MySims
+	* Wii & PC
 	* Kingdom
 	* Agents
 	* Skyheroes
