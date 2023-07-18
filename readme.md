@@ -1,6 +1,7 @@
 ### MorcuTool
 
-A tool that opens Maxis .package archives and allows the user to export the files inside, and in some cases convert them to more easily-viewable formats, like OBJ models and PNG images.
+A tool that opens Maxis .package archives and allows the user to export the files inside.
+In some cases, it also permits the user to convert them to more easily-viewable formats, like OBJ models and PNG images.
 This is particularly for .package versions that are not widely supported elsewhere; i.e. not Sims 3 or Sims 4, which already have their own bespoke programs elsewhere on the internet.
 
 MorcuTool currently supports packages from:
