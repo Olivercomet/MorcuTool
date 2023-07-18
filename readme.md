@@ -5,11 +5,11 @@ In some cases, it also permits the user to convert them to more easily-viewable 
 This is particularly for .package versions that are not widely supported elsewhere; i.e. not Sims 3 or Sims 4, which already have their own bespoke programs elsewhere on the internet.
 
 MorcuTool currently supports packages from:
-*Spore
-*MySims
-	*Kingdom
-	*Agents
-	*Skyheroes
+* Spore
+* MySims
+	* Kingdom
+	* Agents
+	* Skyheroes
 
 ### Usage notes
 
